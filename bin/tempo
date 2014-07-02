@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Tempo\Console\Application;
+
+// run the command application
+$application = new Application();
+$application->run();
