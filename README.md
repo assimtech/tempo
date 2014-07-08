@@ -112,7 +112,7 @@ E.g. A task might be defined as:
 
 #### Strategies
 
-A strategy is a method for deploying or performing common tasks with your software written as a PHP [callable](http://www.php.net/manual/en/language.types.callable.php) with the aid of [Tasks]
+A strategy is a method for deploying or performing common tasks with your software written as a PHP [callable](http://www.php.net/manual/en/language.types.callable.php) with the aid of Tasks.
 
 Common examples of strategies might be:
 
