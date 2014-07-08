@@ -59,6 +59,25 @@ A node can be defined by any host or IP address which is valid in the network yo
     $production->addNode($server);
 
 
+Optionally, a node can also be given a role or multiple roles when registered in an environment
+
+    // tempo.php
+
+    // ...
+
+    // Give our node a single role
+    $server = new Tempo\Node('example.com');
+    $production->addNode($server, 'web');
+
+    // Or many at once
+    $production->addNode($server, array(
+        'db',
+        'cache',
+    ));
+
+    // example.com is now our web, db and cache server, we can later use this to do things to it in a Strategy
+
+
 #### Tasks
 
 A Task is a PHP [callable](http://www.php.net/manual/en/language.types.callable.php) which achieves a singular goal.  We aim to include enough common tasks in tempo such that most people don't have to write one. However you can add your own tasks to tempo if you want to perform something specific (or send us a pull request if you think others might use your task).
@@ -108,48 +127,58 @@ It's feasible that all of the above could be separate strategies or a singular s
 
     $tempo = new Tempo\Tempo();
 
-    $production = new Tempo\Environment('production');
+    $production = new Tempo\Environment('prod');
     $tempo->addEnvironment($production);
 
-    $server = new Tempo\Node('example.com');
-    $production->addNode($server);
+    $fepServer = new Tempo\Node('user', 'fep.example.com');
+    $production->addNode($fepServer, 'fep');
 
-    $deploy = function () use ($tempo) {
+    $webServer1 = new Tempo\Node('user', 'web1.example.com');
+    $production->addNode($webServer1, 'web');
+
+    $webServer2 = new Tempo\Node('user', 'web2.example.com');
+    $production->addNode($webServer2, 'web');
+
+    $dbServer = new Tempo\Node('user', 'db.example.com');
+    $production->addNode($dbServer, 'db');
+
+    $fepWebDbDeploy = function () use ($tempo) {
         $frontEndProxy = $tempo->getNode('fep');
-        $frontEndProxy->runTask('disable');
+        // This will be executed on the FEP
+        $frontEndProxy->runTask('varnish-use', 'maintenance');
 
         $origin = __DIR__ . 'releaseBuilds/' . $tempo->getNewVersion();
-        foreach ($tempo->getNodes('web') as $node) {
-            $tempo->runTask('rsync', $origin, $node);
+        foreach ($tempo->getNodes('web') as $webNode) {
+            // This will be executed locally (rsync from local to the web servers)
+            $tempo->runTask('rsync', $origin, $webNode);
         }
 
         $database = $tempo->getNode('db');
+        // This will be executed locally (rsync from local to the db server)
+        $tempo->runTask('rsync', $origin, $database);
+        // This will be executed on the DB server
         $database->runTask('migrate', $tempo->getOldVersion(), $tempo->getNewVersion());
 
-        $frontEndProxy->runTask('enable');
+        // This will be executed on the FEP
+        $frontEndProxy->runTask('varnish-use', 'boot');
     }
-
-
-### Common example set ups
-
-#### A single production server
-
-    <?php
-
-    $tempo = new Tempo\Tempo();
-
-    $production = $tempo->addEnvironment('production');
-
-    // You can use an IP address or fqdn etc
-    $myProductionServer = $production->addNode('example.com');
-
-
-#### A single server in multiple environments
-
-
-#### Multiple servers in multiple environments
+    // Lets tell tempo we could deploy to production
+    $tempo->addStrategy($fepWebDbDeploy, 'deploy', array(
+        $production,
+    ));
 
 
 ## Usage
 
 
+    tempo <strategy name> [environment name] [additional options]
+
+An environment name is not required if you have exactly one environment defined in tempo, otherwise you muse specify an environment.
+
+Additional options may be required by your strategy.
+
+A common use case would be to require a version number for deployment.  Some users may however prefer to be asked interactively for the version number (allowing a Task to get the latest version and prompt the user if they just want to deploy the latest or override with a specific version).
+
+Given the strategy defined above you could deploy by running:
+
+    tempo deploy prod
