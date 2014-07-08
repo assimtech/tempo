@@ -9,10 +9,11 @@ class NodeTest extends PHPUnit_Framework_TestCase
 {
     public function testName()
     {
+        $user = 'user';
         $host = 'localhost';
 
-        $node = new Node($host);
+        $node = new Node($user, $host);
 
-        $this->assertEquals($host, (string)$node);
+        $this->assertEquals("$user@$host", (string)$node);
     }
 }
