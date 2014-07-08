@@ -11,6 +11,12 @@ class DeployCommand extends BaseCommand
 {
     protected function configure()
     {
+        $help = <<<EOT
+The <info>deploy</info> command reads the tempo.yml file from
+the current directory, processes it, and attempts to deploy the project
+to the nominated environment.
+EOT;
+
         $this
             ->setName('deploy')
             ->setDescription('DEPLOOOY')
@@ -19,12 +25,7 @@ class DeployCommand extends BaseCommand
                     new InputOption('verbose', 'v', InputOption::VALUE_NONE, 'show more details'),
                 )
             )
-            ->setHelp(<<<EOT
-The <info>deploy</info> command reads the tempo.yml file from
-the current directory, processes it, and attempts to deploy the project
-to the nominated environment.
-EOT
-            )
+            ->setHelp($help)
         ;
     }
 
