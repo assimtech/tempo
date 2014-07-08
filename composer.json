@@ -1,5 +1,5 @@
 {
-    "name": "tempo/tempo",
+    "name": "kralos/tempo",
     "type": "library",
     "description": "Automated deployment for server side software",
     "homepage": "https://github.com/kralos/tempo",
