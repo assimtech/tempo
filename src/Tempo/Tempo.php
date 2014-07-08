@@ -10,16 +10,12 @@ class Tempo
     /** @var \Tempo\Environment[] $environments */
     private $environments;
 
-    /** @var \Tempo\Node[] $nodes */
-    private $nodes;
-
     /** @var callable[] $strategies */
     private $strategies;
 
     public function __construct()
     {
         $this->environments = array();
-        $this->nodes = array();
         $this->strategies = array();
     }
 
@@ -56,41 +52,6 @@ class Tempo
         }
 
         return $this->environments[$name];
-    }
-
-    /**
-     * @param \Tempo\Node $node
-     * @return self
-     * @throws \InvalidArgumentException
-     */
-    public function addNode(Node $node)
-    {
-        if (isset($this->nodes[(string)$node])) {
-            throw new InvalidArgumentException(sprintf(
-                'Node: %s already exists',
-                $node
-            ));
-        }
-
-        $this->nodes[(string)$node] = $node;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return \Tempo\Node
-     */
-    public function getNode($name)
-    {
-        if (!isset($this->node[$name])) {
-            throw new OutOfBoundsException(sprintf(
-                'Node: %s doesn\'t exist',
-                $name
-            ));
-        }
-
-        return $this->node[$name];
     }
 
     /**
