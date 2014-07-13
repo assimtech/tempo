@@ -4,19 +4,16 @@ namespace Tempo;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
+use Symfony\Component\Process\Process;
 
 class Tempo
 {
     /** @var \Tempo\Environment[] $environments */
     private $environments;
 
-    /** @var callable[] $strategies */
-    private $strategies;
-
     public function __construct()
     {
         $this->environments = array();
-        $this->strategies = array();
     }
 
     /**
@@ -39,6 +36,19 @@ class Tempo
     }
 
     /**
+     * @param \Tempo\Environment[] $environments
+     * @return self
+     */
+    public function addEnvironments($environments)
+    {
+        foreach ($environments as $environment) {
+            $this->addEnvironment($environment);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @return \Tempo\Environment
      */
@@ -55,29 +65,34 @@ class Tempo
     }
 
     /**
-     * @param string $name
-     * @param callable $strategy
-     * @return self
+     * @return \Tempo\Environment[]
      */
-    public function addStrategy($name, $strategy)
+    public function getEnvironments()
     {
-        if (isset($this->strategies[$name])) {
-            throw new InvalidArgumentException(sprintf(
-                'Strategy: %s already exists',
-                $name
-            ));
-        }
-
-        $this->strategies[$name] = $strategy;
-
-        return $this;
+        return $this->environments;
     }
 
     /**
-     * @return \Tempo\Strategy
+     * @param callable|string $task Command(s) to run
+     * @param mixed $paramater,... Zero or more parameters to be passed to the task
+     * @return mixed
      */
-    public function getStrategy($name)
+    public function run()
     {
-        return $this->strategies[$name];
+        $args = func_get_args();
+        $task = array_shift($args);
+        if (is_string($task)) {
+            $commands = $task;
+        } else {
+            $commands = call_user_func_array($task, $args);
+        }
+
+        $process = new Process($commands);
+        $process->mustRun();
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException($process->getErrorOutput());
+        }
+
+        return $process->getOutput();
     }
 }

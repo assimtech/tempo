@@ -9,7 +9,7 @@ class Application extends BaseApplication
 {
     public function __construct()
     {
-        parent::__construct('Tempo', 'dev');
+        parent::__construct('tempo');
     }
 
     protected function getDefaultCommands()

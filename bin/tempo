@@ -3,8 +3,12 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Tempo\Console\Application;
+use Symfony\Component\Console\Application;
+use Tempo\Command\Factory as CommandFactory;
 
-// run the command application
 $application = new Application();
+
+$commands = CommandFactory::getCommands();
+$application->addCommands($commands);
+
 $application->run();

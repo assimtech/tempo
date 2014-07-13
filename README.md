@@ -4,15 +4,22 @@
 
 Automated deployment for server side software
 
-Tempo allows you express how to deploy your software to your servers using a few simple definitions.
+Tempo allows you to express how software is deployed to your servers using a few simple definitions.
 
 
 ## Installation
 
-Tempo can either be installed as:
 
-*   a library in your project
-*   an executable [phar](http://www.php.net/manual/en/intro.phar.php)
+### With composer
+
+Add a development dependency to your project's `composer.json`.  Generally you aren't likely to want tempo installed on your production nodes, only your development machine.
+
+    {
+        "require-dev": {
+            "kralos/tempo": "dev-master"
+        }
+    }
+
 
 
 ## Set up
@@ -20,7 +27,8 @@ Tempo can either be installed as:
 Firstly you will need to describe how you want your project deployed.  This is done by creating a `tempo.php` file in the root of your project.
 
 
-### What we need define for tempo
+### What we need to define for tempo
+
 
 #### Environments
 
@@ -169,7 +177,6 @@ It's feasible that all of the above could be separate strategies or a singular s
 
 
 ## Usage
-
 
     tempo <strategy name> [environment name] [additional options]
 
