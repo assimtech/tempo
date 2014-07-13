@@ -37,13 +37,7 @@ class Strategy extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln("omghai2u");
-
-        $result = call_user_func($this->strategy, $this->environment);
-
-        if ($input->getOption('verbose')) {
-            $output->writeln($result);
-        }
+        call_user_func($this->strategy, $this->environment);
 
         return 0;
     }
