@@ -27,6 +27,42 @@ Add a development dependency to your project's `composer.json`.  Generally you a
 Firstly you will need to describe how you want your project deployed.  This is done by creating a `tempo.php` file in the root of your project.
 
 
+## Quick start
+
+Create a `tempo.php` file in the root of your project containing:
+
+    $tempo = new Tempo\Tempo();
+
+    $myenv = new Tempo\Environment('myenv');
+    $tempo->addEnvironment($myenv);
+
+    $server1 = new Tempo\Node('server1');
+    $server2 = new Tempo\Node('server2');
+    $myenv
+        ->addNode($server1)
+        ->addNode($server2)
+    ;
+
+    $test = function (Tempo\Environment $env) use ($tempo) {
+        $nodes = $env->getNodes();
+
+        foreach ($nodes as $node) {
+            echo $node->run('hostname');
+        }
+
+        echo $tempo->run('hostname');
+    };
+
+    // Lets tell tempo we could test on myenv
+    $myenv->addStrategy('test', $test);
+
+    return $tempo;
+
+Then run the following command:
+
+    bin/tempo myenv:test
+
+
 ### What we need to define for tempo
 
 
@@ -44,10 +80,12 @@ Common examples include:
 To define an environment simply:
 
     // tempo.php
-
     $tempo = new Tempo\Tempo();
+
     $production = new Tempo\Environment('production');
     $tempo->addEnvironment($production);
+
+    return $tempo;
 
 
 #### Nodes
@@ -65,6 +103,8 @@ A node can be defined by any host or IP address which is valid in the network yo
 
     $server = new Tempo\Node('example.com');
     $production->addNode($server);
+
+    return $tempo;
 
 
 Optionally, a node can also be given a role or multiple roles when registered in an environment
@@ -85,37 +125,31 @@ Optionally, a node can also be given a role or multiple roles when registered in
 
     // example.com is now our web, db and cache server, we can later use this to do things to it in a Strategy
 
+    // ...
+
 
 #### Tasks
 
-A Task is a PHP [callable](http://www.php.net/manual/en/language.types.callable.php) which achieves a singular goal.  We aim to include enough common tasks in tempo such that most people don't have to write one. However you can add your own tasks to tempo if you want to perform something specific (or send us a pull request if you think others might use your task).
+A Task may be a string which is executed on a shell or a PHP [callable](http://www.php.net/manual/en/language.types.callable.php) which returns commands to run.  We aim to include enough common tasks in tempo such that most people don't have to write one. However you can add your own tasks to tempo if you want to perform something specific (or send us a pull request if you think others might use your task). See `tempo/src/Tempo/Task` for the built in tasks.
 
-E.g. A task might be defined as:
+E.g. An rsync task might be defined as:
 
     /**
-     * @var callable $rsync Copies files from one place to another
-     * This task depends on:
-     *      - shell
-     *      - optbuilder (only required of options are supplied)
+     * Rsync - Copies files from one place to another
      *
      * @param string $origin The origin defined in user@host:[:] syntax
      * @param string $destination The destination defined in user@host:[:] syntax
      * @param array $options An array of valid rsync options confirming to the optbuilder format
      */
-    $rsync = function ($origin, $destination, $options = array()) use ($tempo) {
+    return function ($origin, $destination, $options = null) use ($tempo) {
         $cmd = 'rsync';
-        if (!empty($options)) {
-            $cmd .= ' ' . $tempo->runTask('optbuilder', $options);
+        if ($options !== null) {
+            $cmd .= ' ' . $options;
         }
         $cmd .= " $origin $destination";
 
-        return $tempo->runTask('shell', $cmd);
-    }
-    $tempo->addTask('rsync', $rsync, array(
-        // Dependencies
-        'shell',
-        'optbuilder',
-    ));
+        return $cmd;
+    };
 
 
 #### Strategies
@@ -138,30 +172,32 @@ It's feasible that all of the above could be separate strategies or a singular s
     $production = new Tempo\Environment('prod');
     $tempo->addEnvironment($production);
 
-    $fepServer = new Tempo\Node('user', 'fep.example.com');
+    $fepServer = new Tempo\Node('fep.example.com', array(
+        'user' => 'fepguy',
+    ));
     $production->addNode($fepServer, 'fep');
 
-    $webServer1 = new Tempo\Node('user', 'web1.example.com');
+    $webServer1 = new Tempo\Node('web1.example.com');
     $production->addNode($webServer1, 'web');
 
-    $webServer2 = new Tempo\Node('user', 'web2.example.com');
+    $webServer2 = new Tempo\Node('web2.example.com');
     $production->addNode($webServer2, 'web');
 
-    $dbServer = new Tempo\Node('user', 'db.example.com');
+    $dbServer = new Tempo\Node('db.example.com');
     $production->addNode($dbServer, 'db');
 
-    $fepWebDbDeploy = function () use ($tempo) {
-        $frontEndProxy = $tempo->getNode('fep');
+    $fepWebDbDeploy = function (Tempo\Environment $env) use ($tempo) {
+        $frontEndProxy = $env->getNode('fep');
         // This will be executed on the FEP
         $frontEndProxy->runTask('varnish-use', 'maintenance');
 
         $origin = __DIR__ . 'releaseBuilds/' . $tempo->getNewVersion();
-        foreach ($tempo->getNodes('web') as $webNode) {
+        foreach ($env->getNodes('web') as $webNode) {
             // This will be executed locally (rsync from local to the web servers)
             $tempo->runTask('rsync', $origin, $webNode);
         }
 
-        $database = $tempo->getNode('db');
+        $database = $env->getNode('db');
         // This will be executed locally (rsync from local to the db server)
         $tempo->runTask('rsync', $origin, $database);
         // This will be executed on the DB server
@@ -169,23 +205,17 @@ It's feasible that all of the above could be separate strategies or a singular s
 
         // This will be executed on the FEP
         $frontEndProxy->runTask('varnish-use', 'boot');
-    }
+    };
     // Lets tell tempo we could deploy to production
-    $tempo->addStrategy($fepWebDbDeploy, 'deploy', array(
-        $production,
-    ));
+    $production->addStrategy('deploy', $fepWebDbDeploy);
+
+    return $tempo;
 
 
 ## Usage
 
-    tempo <strategy name> [environment name] [additional options]
-
-An environment name is not required if you have exactly one environment defined in tempo, otherwise you muse specify an environment.
-
-Additional options may be required by your strategy.
-
-A common use case would be to require a version number for deployment.  Some users may however prefer to be asked interactively for the version number (allowing a Task to get the latest version and prompt the user if they just want to deploy the latest or override with a specific version).
+    tempo <environment name>:<strategy name>
 
 Given the strategy defined above you could deploy by running:
 
-    tempo deploy prod
+    tempo prod:deploy

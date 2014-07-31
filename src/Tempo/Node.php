@@ -10,35 +10,86 @@ class Node
     /** @var string $host IP Address or hostname */
     private $host;
 
-    /** @var string $user The user to use for accessing this node */
-    private $user;
+    /** @var array $options */
+    private $options;
 
     /**
      * @param string $host IP Address or hostname
-     * @param string $user User for accessing the node (Optional, if not specified the current user will be used)
+     * @param array $options Associative array of options
+     *
+     * Available options are:
+     *      user - The user to use for the ssh connection
+     *      controlMasterSocket - The socket file to use for connection sharing (see ControlPath in ssh_config(5))
+     *      controlLifetime - The socket file to use for connection sharing (see ControlPersist in ssh_config(5))
      */
-    public function __construct($host, $user = null)
+    public function __construct($host, $options = array())
     {
         $this->host = $host;
-        $this->user = $user;
+        $this->options = $options;
+
+        // Set some nice default options
+        $this->options = array_merge(array(
+            'controlMasterSocket' => sprintf(
+                '~/.ssh/tempo_ctlmstr_%s',
+                $this
+            ),
+            'controlLifetime' => '10m',
+        ), $this->options);
     }
 
     public function __toString()
     {
-        if ($this->user === null) {
-            return $this->host;
+        if (isset($this->options['user'])) {
+            return sprintf(
+                '%s@%s',
+                $this->options['user'],
+                $this->host
+            );
         } else {
-            return $this->user.'@'.$this->host;
+            return $this->host;
+        }
+    }
+
+    private function establishControlMaster()
+    {
+        $returnVal = null;
+        $checkCommand = sprintf(
+            '[ -S %s ]',
+            $this->options['controlMasterSocket']
+        );
+        system($checkCommand, $returnVal);
+        if ($returnVal === 0) {
+            return;
+        }
+
+        printf(
+            "Establishing a connection to: %s\n",
+            $this
+        );
+        $controlCommand = sprintf(
+            'ssh -nTM -S %s -o "ControlPersist=%s" %s',
+            $this->options['controlMasterSocket'],
+            '10m',
+            $this
+        );
+        passthru($controlCommand, $returnVal);
+        if ($returnVal !== 0) {
+            throw new RuntimeException(sprintf(
+                'could not establish control connection using command: %s',
+                $controlCommand
+            ));
         }
     }
 
     /**
      * @param callable|string $task Command(s) to run
      * @param mixed $paramater,... Zero or more parameters to be passed to the task
-     * @return mixed
+     * @return string The command output
      */
     public function run()
     {
+        $this->establishControlMaster();
+
         $args = func_get_args();
         $task = array_shift($args);
         if (is_string($task)) {
@@ -47,14 +98,13 @@ class Node
             $commands = call_user_func_array($task, $args);
         }
 
-        $process = new Process("ssh $this");
-        $process
-            ->setInput($commands)
-            ->mustRun()
-        ;
-        if (!$process->isSuccessful()) {
-            throw new RuntimeException($process->getErrorOutput());
-        }
+        $process = new Process(sprintf(
+            "ssh -S %s %s %s",
+            $this->options['controlMasterSocket'],
+            $this,
+            $commands
+        ));
+        $process->mustRun();
 
         return $process->getOutput();
     }

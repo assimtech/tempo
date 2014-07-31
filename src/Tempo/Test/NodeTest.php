@@ -21,7 +21,9 @@ class NodeTest extends PHPUnit_Framework_TestCase
         $user = 'user';
         $host = 'localhost';
 
-        $node = new Node($host, $user);
+        $node = new Node($host, array(
+            'user' => $user,
+        ));
 
         $this->assertEquals("$user@$host", (string)$node);
     }

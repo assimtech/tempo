@@ -75,7 +75,7 @@ class Tempo
     /**
      * @param callable|string $task Command(s) to run
      * @param mixed $paramater,... Zero or more parameters to be passed to the task
-     * @return mixed
+     * @return string The command output
      */
     public function run()
     {
@@ -89,9 +89,6 @@ class Tempo
 
         $process = new Process($commands);
         $process->mustRun();
-        if (!$process->isSuccessful()) {
-            throw new RuntimeException($process->getErrorOutput());
-        }
 
         return $process->getOutput();
     }

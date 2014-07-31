@@ -13,6 +13,9 @@ class Environment
     /** @var \Tempo\Node[] $nodes */
     private $nodes;
 
+    /** @var array $roles */
+    private $roles;
+
     /** @var callable[] $strategies */
     private $strategies;
 
@@ -23,6 +26,7 @@ class Environment
     {
         $this->name = $name;
         $this->nodes = array();
+        $this->roles = array();
         $this->strategies = array();
     }
 
@@ -36,11 +40,30 @@ class Environment
 
     /**
      * @param \Tempo\Node $node
+     * @param string|array $roles Optional for grouping of like nodes e.g. fep, web, db
      * @return self
      * @throws \InvalidArgumentException
      */
-    public function addNode(Node $node)
+    public function addNode(Node $node, $roles = array())
     {
+        if (is_string($roles)) {
+            $roles = array($roles);
+        } elseif (is_array($roles)) {
+            foreach ($roles as $role) {
+                if (!is_string($role)) {
+                    throw InvalidArgumentException(sprintf(
+                        'Environment: %s, roles must be a string or array of strings',
+                        $this
+                    ));
+                }
+            }
+        } else {
+            throw InvalidArgumentException(sprintf(
+                'Environment: %s, roles must be a string or array of strings',
+                $this
+            ));
+        }
+
         if (isset($this->nodes[(string)$node])) {
             throw new InvalidArgumentException(sprintf(
                 'Environment: %s, Node: %s already exists',
@@ -50,12 +73,17 @@ class Environment
         }
 
         $this->nodes[(string)$node] = $node;
+        foreach ($roles as $role) {
+            if (!isset($this->roles[$role])) {
+                $this->roles[$role] = array();
+            }
+            $this->roles[$role][] = $node;
+        }
 
         return $this;
     }
 
     /**
-     *
      * @param string $name Name is optional if exactly one node is in the environment
      * @return \Tempo\Node
      * @throws \InvalidArgumentException
@@ -64,13 +92,13 @@ class Environment
     public function getNode($name = null)
     {
         if ($name === null) {
-            if (count($this->nodes) !== 1) {
+            if (count($this->nodes) !== 1 || count(current($this->nodes))) {
                 throw new InvalidArgumentException(
                     'You must specify the node name'
                 );
             }
 
-            return current($this->nodes);
+            return current(current($this->nodes));
         }
 
         if (!isset($this->nodes[$name])) {
@@ -82,6 +110,29 @@ class Environment
         }
 
         return $this->nodes[$name];
+    }
+
+    public function getNodes($role = null)
+    {
+        if ($role === null) {
+            return $this->nodes;
+        }
+
+        if (!is_string($role)) {
+            throw new InvalidArgumentException(sprintf(
+                'Environment: %s, role must be a string or null for all nodes'
+            ));
+        }
+
+        if (!isset($this->roles[$role])) {
+            throw new OutOfBoundsException(sprintf(
+                'Environment: %s, Role: %s doesn\'t exist',
+                $this,
+                $role
+            ));
+        }
+
+        return $this->roles[$role];
     }
 
     /**
