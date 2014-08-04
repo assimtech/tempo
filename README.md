@@ -36,14 +36,13 @@ Create a `tempo.php` file in the root of your project containing:
     $myenv = new Tempo\Environment('myenv');
     $tempo->addEnvironment($myenv);
 
-    $server1 = new Tempo\Node('server1');
-    $server2 = new Tempo\Node('server2');
     $myenv
-        ->addNode($server1)
-        ->addNode($server2)
+        ->addNode(new Tempo\Node('server1'))
+        ->addNode(new Tempo\Node('server2'))
     ;
 
-    $test = function (Tempo\Environment $env) use ($tempo) {
+    // Lets tell tempo we could test on myenv
+    $myenv->addStrategy('test', function (Tempo\Environment $env) use ($tempo) {
         $nodes = $env->getNodes();
 
         foreach ($nodes as $node) {
@@ -51,10 +50,7 @@ Create a `tempo.php` file in the root of your project containing:
         }
 
         echo $tempo->run('hostname');
-    };
-
-    // Lets tell tempo we could test on myenv
-    $myenv->addStrategy('test', $test);
+    });
 
     return $tempo;
 
@@ -186,7 +182,8 @@ It's feasible that all of the above could be separate strategies or a singular s
     $dbServer = new Tempo\Node('db.example.com');
     $production->addNode($dbServer, 'db');
 
-    $fepWebDbDeploy = function (Tempo\Environment $env) use ($tempo) {
+    // Lets tell tempo we could deploy to production
+    $production->addStrategy('deploy', function (Tempo\Environment $env) use ($tempo) {
         $frontEndProxy = $env->getNode('fep');
         // This will be executed on the FEP
         $frontEndProxy->runTask('varnish-use', 'maintenance');
@@ -205,9 +202,7 @@ It's feasible that all of the above could be separate strategies or a singular s
 
         // This will be executed on the FEP
         $frontEndProxy->runTask('varnish-use', 'boot');
-    };
-    // Lets tell tempo we could deploy to production
-    $production->addStrategy('deploy', $fepWebDbDeploy);
+    });
 
     return $tempo;
 

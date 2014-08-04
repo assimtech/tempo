@@ -73,11 +73,28 @@ class Tempo
     }
 
     /**
-     * @param callable|string $task Command(s) to run
+     * @param callable $task Command(s) to run
      * @param mixed $paramater,... Zero or more parameters to be passed to the task
      * @return string The command output
      */
-    public function run()
+    public function runTask()
+    {
+        $args = func_get_args();
+        $task = array_shift($args);
+        if (is_string($task)) {
+            $commands = $task;
+        } else {
+            $commands = call_user_func_array($task, $args);
+        }
+
+        return $this->run($commands);
+    }
+
+    /**
+     * @param string $commands Command(s) to run
+     * @return string The command output
+     */
+    public function run($commands)
     {
         $args = func_get_args();
         $task = array_shift($args);

@@ -82,14 +82,12 @@ class Node
     }
 
     /**
-     * @param callable|string $task Command(s) to run
+     * @param callable $task Command(s) to run
      * @param mixed $paramater,... Zero or more parameters to be passed to the task
      * @return string The command output
      */
-    public function run()
+    public function runTask()
     {
-        $this->establishControlMaster();
-
         $args = func_get_args();
         $task = array_shift($args);
         if (is_string($task)) {
@@ -97,6 +95,17 @@ class Node
         } else {
             $commands = call_user_func_array($task, $args);
         }
+
+        return $this->run($commands);
+    }
+
+    /**
+     * @param string $commands Command(s) to run
+     * @return string The command output
+     */
+    public function run($commands)
+    {
+        $this->establishControlMaster();
 
         $process = new Process(sprintf(
             "ssh -S %s %s %s",
