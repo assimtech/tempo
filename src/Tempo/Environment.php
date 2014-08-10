@@ -7,13 +7,13 @@ use OutOfBoundsException;
 
 class Environment
 {
-    /** @var string $name Environment name, typically one of: development, staging, testing, demo, production */
+    /** @var string $name */
     private $name;
 
     /** @var \Tempo\Node[] $nodes */
     private $nodes;
 
-    /** @var array $roles */
+    /** @var \Tempo\Node[][] $roles */
     private $roles;
 
     /** @var callable[] $strategies */
@@ -92,13 +92,19 @@ class Environment
     public function getNode($name = null)
     {
         if ($name === null) {
-            if (count($this->nodes) !== 1 || count(current($this->nodes))) {
-                throw new InvalidArgumentException(
-                    'You must specify the node name'
-                );
+            if (count($this->nodes) !== 1) {
+                $nodeNames = array();
+                foreach ($this->nodes as $node) {
+                    $nodeNames[] = (string)$node;
+                }
+                throw new InvalidArgumentException(sprintf(
+                    'You must specify the node name because environment %s has more than 1 node: %s',
+                    $this,
+                    print_r($nodeNames, true)
+                ));
             }
 
-            return current(current($this->nodes));
+            return current($this->nodes);
         }
 
         if (!isset($this->nodes[$name])) {

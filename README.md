@@ -135,7 +135,7 @@ E.g. An rsync task might be defined as:
      *
      * @param string $origin The origin defined in user@host:[:] syntax
      * @param string $destination The destination defined in user@host:[:] syntax
-     * @param array $options An array of valid rsync options confirming to the optbuilder format
+     * @param string $options Valid rsync options
      */
     return function ($origin, $destination, $options = null) use ($tempo) {
         $cmd = 'rsync';
