@@ -6,18 +6,15 @@
     "licence": "MIT",
     "require": {
         "php": ">=5.3.3",
-        "symfony/console": "~2.5",
-        "symfony/process": "~2.5"
+        "symfony/console": "~2",
+        "symfony/process": "~2"
     },
     "require-dev": {
-        "pdepend/pdepend": "~2.0",
-        "theseer/phpdox": "~0.6",
-        "phploc/phploc": "~2.0",
-        "phpmd/phpmd": "~2.0",
-        "phpunit/phpunit": "~4.1",
-        "sebastian/phpcpd": "~2.0",
-        "sebastian/phpdcd": "~1.0",
-        "squizlabs/php_codesniffer": "~1.5"
+        "pdepend/pdepend": "~2",
+        "phpmd/phpmd": "~2",
+        "phpunit/phpunit": "~4",
+        "sebastian/phpcpd": "~2",
+        "squizlabs/php_codesniffer": "~1"
     },
     "autoload": {
         "psr-0": {

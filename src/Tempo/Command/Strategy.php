@@ -21,18 +21,26 @@ class Strategy extends Command
      */
     public function __construct(Environment $environment, $strategyName)
     {
+        $this->environment = $environment;
+        $this->strategy = $environment->getStrategy($strategyName);
+
         $commandName = sprintf(
             '%s:%s',
             $environment,
             $strategyName
         );
 
-        $this->environment = $environment;
-        $this->strategy = $environment->getStrategy($strategyName);
-
         parent::__construct($commandName);
     }
 
+    /**
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         call_user_func($this->strategy, $this->environment);

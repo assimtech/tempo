@@ -2,12 +2,14 @@
 
 namespace Tempo;
 
-use RuntimeException;
+use ArrayObject;
 use Symfony\Component\Process\Process;
+use InvalidArgumentException;
+use RuntimeException;
 
-class Node
+class Node extends ArrayObject
 {
-    /** @var string $host IP Address or hostname */
+    /** @var string $host */
     private $host;
 
     /** @var array $options */
@@ -82,24 +84,30 @@ class Node
     }
 
     /**
+     * Runs a task as specified by a given callable which returns the command string to run on the node
+     *
      * @param callable $task Command(s) to run
      * @param mixed $paramater,... Zero or more parameters to be passed to the task
      * @return string The command output
+     * @throws \InvalidArgumentException
      */
     public function runTask()
     {
         $args = func_get_args();
         $task = array_shift($args);
-        if (is_string($task)) {
-            $commands = $task;
-        } else {
-            $commands = call_user_func_array($task, $args);
+
+        if (!is_callable($task)) {
+            throw new InvalidArgumentException('$task must be a callable');
         }
+
+        $commands = call_user_func_array($task, $args);
 
         return $this->run($commands);
     }
 
     /**
+     * Runs a command as specified by a given string on the node
+     *
      * @param string $commands Command(s) to run
      * @return string The command output
      */
@@ -111,8 +119,9 @@ class Node
             "ssh -S %s %s %s",
             $this->options['controlMasterSocket'],
             $this,
-            $commands
+            escapeshellarg($commands)
         ));
+        $process->setTimeout(null);
         $process->mustRun();
 
         return $process->getOutput();

@@ -2,10 +2,11 @@
 
 namespace Tempo;
 
+use ArrayObject;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
-class Environment
+class Environment extends ArrayObject
 {
     /** @var string $name */
     private $name;
@@ -176,6 +177,21 @@ class Environment
         }
 
         return $this->strategies[$name];
+    }
+
+    /**
+     * Add multiple strategies at once
+     *
+     * @param array $strategies Associative array of strategy names => strategies
+     * @return self
+     */
+    public function addStrategies($strategies)
+    {
+        foreach ($strategies as $name => $strategy) {
+            $this->addStrategy($name, $strategy);
+        }
+
+        return $this;
     }
 
     /**

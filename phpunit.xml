@@ -11,9 +11,9 @@
 
     <filter>
         <whitelist>
-            <directory>src</directory>
+            <directory suffix=".php">src</directory>
             <exclude>
-                <directory>Test</directory>
+                <directory suffix=".php">src/Tempo/Test</directory>
             </exclude>
         </whitelist>
     </filter>
