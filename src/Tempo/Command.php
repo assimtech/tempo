@@ -1,33 +1,34 @@
 <?php
 
-namespace Tempo\Command;
+namespace Tempo;
 
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tempo\Environment;
 
-class Strategy extends Command
+class Command extends SymfonyCommand
 {
     /** @var \Tempo\Environment $environment */
     protected $environment;
 
-    /** @var callable $strategy */
-    protected $strategy;
+    /** @var callable $task */
+    protected $task;
 
     /**
      * @param \Tempo\Environment $environment
-     * @param string $strategyName
+     * @param string $taskName
+     * @param callable $task Callable must have the signature: function (\Tempo\Environment $env)
      */
-    public function __construct(Environment $environment, $strategyName)
+    public function __construct(Environment $environment, $taskName, $task)
     {
         $this->environment = $environment;
-        $this->strategy = $environment->getStrategy($strategyName);
+        $this->task = $task;
 
         $commandName = sprintf(
             '%s:%s',
             $environment,
-            $strategyName
+            $taskName
         );
 
         parent::__construct($commandName);
@@ -43,7 +44,7 @@ class Strategy extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        call_user_func($this->strategy, $this->environment);
+        call_user_func($this->task, $this->environment);
 
         return 0;
     }

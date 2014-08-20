@@ -1,20 +1,12 @@
 <?php
 
-namespace Tempo;
+namespace Tempo\Node;
 
-use ArrayObject;
 use Symfony\Component\Process\Process;
-use InvalidArgumentException;
 use RuntimeException;
 
-class Node extends ArrayObject
+class Remote extends AbstractNode
 {
-    /** @var string $host */
-    private $host;
-
-    /** @var array $options */
-    private $options;
-
     /**
      * @param string $host IP Address or hostname
      * @param array $options Associative array of options
@@ -24,32 +16,39 @@ class Node extends ArrayObject
      *      controlMasterSocket - The socket file to use for connection sharing (see ControlPath in ssh_config(5))
      *      controlLifetime - The socket file to use for connection sharing (see ControlPersist in ssh_config(5))
      */
-    public function __construct($host, $options = array())
+    public function __construct($array)
     {
-        $this->host = $host;
-        $this->options = $options;
+        if (is_string($array)) {
+            $array = array(
+                'host' => $array,
+            );
+        }
 
         // Set some nice default options
-        $this->options = array_merge(array(
+        $array = array_merge(array(
             'controlMasterSocket' => sprintf(
                 '~/.ssh/tempo_ctlmstr_%s',
-                $this
+                $array['host']
             ),
             'controlLifetime' => '10m',
-        ), $this->options);
+        ), $array);
+
+        parent::__construct($array);
     }
 
     public function __toString()
     {
-        if (isset($this->options['user'])) {
-            return sprintf(
+        $name = $this['host'];
+
+        if (isset($this['user'])) {
+            $name = sprintf(
                 '%s@%s',
-                $this->options['user'],
-                $this->host
+                $this['user'],
+                $name
             );
-        } else {
-            return $this->host;
         }
+
+        return $name;
     }
 
     private function establishControlMaster()
@@ -58,7 +57,7 @@ class Node extends ArrayObject
         $returnVal = null;
         $checkCommand = sprintf(
             '[ -S %s ]',
-            $this->options['controlMasterSocket']
+            $this['controlMasterSocket']
         );
         system($checkCommand, $returnVal);
         if ($returnVal === 0) {
@@ -75,17 +74,17 @@ class Node extends ArrayObject
             '-M', // Places the ssh client into "master" mode for connection sharing.
             sprintf(
                 '-S %s', // Specifies the location of a control socket for connection sharing
-                escapeshellarg($this->options['controlMasterSocket'])
+                escapeshellarg($this['controlMasterSocket'])
             ),
             sprintf(
                 '-o %s', // ControlPersist - How long to persist the master socket for
-                escapeshellarg('ControlPersist='.$this->options['controlLifetime'])
+                escapeshellarg('ControlPersist='.$this['controlLifetime'])
             )
         );
-        if (isset($this->options['port'])) {
+        if (isset($this['port'])) {
             $args[] = sprintf(
                 '-p %d', // Specifies the location of a control socket for connection sharing
-                $this->options['port']
+                $this['port']
             );
         }
         $controlCommand = sprintf(
@@ -103,32 +102,9 @@ class Node extends ArrayObject
     }
 
     /**
-     * Runs a task as specified by a given callable which returns the command string to run on the node
-     *
-     * @param callable $task Command(s) to run
-     * @param mixed $paramater,... Zero or more parameters to be passed to the task
-     * @return string The command output
-     * @throws \InvalidArgumentException
-     */
-    public function runTask()
-    {
-        $args = func_get_args();
-        $task = array_shift($args);
-
-        if (!is_callable($task)) {
-            throw new InvalidArgumentException('$task must be a callable');
-        }
-
-        $commands = call_user_func_array($task, $args);
-
-        return $this->run($commands);
-    }
-
-    /**
      * Runs a command as specified by a given string on the node
      *
-     * @param string $commands Command(s) to run
-     * @return string The command output
+     * {@inheritdoc}
      */
     public function run($commands)
     {
@@ -136,7 +112,7 @@ class Node extends ArrayObject
 
         $process = new Process(sprintf(
             "ssh -S %s %s %s",
-            $this->options['controlMasterSocket'],
+            $this['controlMasterSocket'],
             $this,
             escapeshellarg($commands)
         ));

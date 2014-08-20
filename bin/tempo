@@ -3,12 +3,29 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Symfony\Component\Console\Application;
-use Tempo\Command\Factory as CommandFactory;
+// Get the tempo definition
+$cwd = getcwd();
+$tempoDefinitionPath = $cwd . '/tempo.php';
+if (!file_exists($tempoDefinitionPath)) {
+    throw new DomainException(sprintf(
+        '%s is missing',
+        $tempoDefinitionPath
+    ));
+}
+$tempo = require $tempoDefinitionPath;
+if (!$tempo) {
+    throw new DomainException(sprintf(
+        'An instance of \Tempo\Definition must be defined and returned in %s',
+        $tempoDefinitionPath
+    ));
+}
+if (!$tempo instanceof Tempo\Definition) {
+    throw new DomainException(sprintf(
+        'Object returned by %s must be an instance of \Tempo\Definition',
+        $tempoDefinitionPath
+    ));
+}
 
-$application = new Application();
-
-$commands = CommandFactory::getCommands();
-$application->addCommands($commands);
-
+$application = new Symfony\Component\Console\Application();
+$application->addCommands($tempo->getCommands());
 $application->run();

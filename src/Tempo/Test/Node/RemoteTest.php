@@ -1,17 +1,17 @@
 <?php
 
-namespace Tempo\Test;
+namespace Tempo\Test\Node;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Node;
+use Tempo\Node\Remote;
 
-class NodeTest extends PHPUnit_Framework_TestCase
+class RemoteTest extends PHPUnit_Framework_TestCase
 {
     public function testHost()
     {
         $host = 'localhost';
 
-        $node = new Node($host);
+        $node = new Remote($host);
 
         $this->assertEquals("$host", (string)$node);
     }
@@ -21,7 +21,8 @@ class NodeTest extends PHPUnit_Framework_TestCase
         $user = 'user';
         $host = 'localhost';
 
-        $node = new Node($host, array(
+        $node = new Remote(array(
+            'host' => $host,
             'user' => $user,
         ));
 

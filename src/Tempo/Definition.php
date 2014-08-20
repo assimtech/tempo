@@ -2,18 +2,21 @@
 
 namespace Tempo;
 
-use Symfony\Component\Process\Process;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
-class Tempo
+class Definition
 {
     /** @var \Tempo\Environment[] $environments */
     private $environments;
 
+    /** @var \Tempo\Command[] $commands */
+    private $commands;
+
     public function __construct()
     {
         $this->environments = array();
+        $this->commands = array();
     }
 
     /**
@@ -73,39 +76,34 @@ class Tempo
     }
 
     /**
-     * Runs a task as specified by a given callable which returns the command string to run on the local host
-     *
-     * @param callable $task Command(s) to run
-     * @param mixed $paramater,... Zero or more parameters to be passed to the task
-     * @return string The command output
-     * @throws \InvalidArgumentException
+     * @param \Tempo\Command $command
+     * @return self
      */
-    public function runTask()
+    public function addCommand(Command $command)
     {
-        $args = func_get_args();
-        $task = array_shift($args);
+        $this->commands[] = $command;
 
-        if (!is_callable($task)) {
-            throw new InvalidArgumentException('$task must be a callable');
-        }
-
-        $commands = call_user_func_array($task, $args);
-
-        return $this->run($commands);
+        return $this;
     }
 
     /**
-     * Runs a command as specified by a given string on the local host
-     *
-     * @param string $commands Command(s) to run
-     * @return string The command output
+     * @param \Tempo\Command[] $commands
+     * @return self
      */
-    public function run($commands)
+    public function addCommands($commands)
     {
-        $process = new Process($commands);
-        $process->setTimeout(null);
-        $process->mustRun();
+        foreach ($commands as $command) {
+            $this->addCommand($command);
+        }
 
-        return $process->getOutput();
+        return $this;
+    }
+
+    /**
+     * @return \Tempo\Command[]
+     */
+    public function getCommands()
+    {
+        return $this->commands;
     }
 }

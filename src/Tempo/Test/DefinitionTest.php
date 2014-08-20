@@ -3,15 +3,15 @@
 namespace Tempo\Test;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Tempo;
+use Tempo\Definition;
 
-class TempoTest extends PHPUnit_Framework_TestCase
+class DefinitionTest extends PHPUnit_Framework_TestCase
 {
     public function testEnvironment()
     {
         $environmentName = 'test';
 
-        $tempo = new Tempo();
+        $tempo = new Definition();
 
         $mockEnvironment = $this->getMock('Tempo\Environment', array('__toString'), array($environmentName));
         $mockEnvironment
