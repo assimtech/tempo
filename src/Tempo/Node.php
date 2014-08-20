@@ -54,6 +54,7 @@ class Node extends ArrayObject
 
     private function establishControlMaster()
     {
+        // Check if control master socket already exists
         $returnVal = null;
         $checkCommand = sprintf(
             '[ -S %s ]',
@@ -68,10 +69,28 @@ class Node extends ArrayObject
             "Establishing a connection to: %s\n",
             $this
         );
+        $args = array(
+            '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin).
+            '-T', // Disable pseudo-tty allocation.
+            '-M', // Places the ssh client into "master" mode for connection sharing.
+            sprintf(
+                '-S %s', // Specifies the location of a control socket for connection sharing
+                escapeshellarg($this->options['controlMasterSocket'])
+            ),
+            sprintf(
+                '-o %s', // ControlPersist - How long to persist the master socket for
+                escapeshellarg('ControlPersist='.$this->options['controlLifetime'])
+            )
+        );
+        if (isset($this->options['port'])) {
+            $args[] = sprintf(
+                '-p %d', // Specifies the location of a control socket for connection sharing
+                $this->options['port']
+            );
+        }
         $controlCommand = sprintf(
-            'ssh -nTM -S %s -o "ControlPersist=%s" %s',
-            $this->options['controlMasterSocket'],
-            '10m',
+            'ssh %s %s',
+            implode(' ', $args),
             $this
         );
         passthru($controlCommand, $returnVal);
