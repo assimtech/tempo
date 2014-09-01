@@ -19,4 +19,12 @@ class Local extends AbstractNode
 
         return $process->getOutput();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return 'localhost';
+    }
 }

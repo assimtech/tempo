@@ -8,34 +8,41 @@ use RuntimeException;
 class Remote extends AbstractNode
 {
     /**
-     * @param string $host IP Address or hostname
-     * @param array $options Associative array of options
+     * @param string|array $properties IP address or hostname or user@hostname or associative array of properties
      *
-     * Available options are:
+     * Built-in properties are:
      *      user - The user to use for the ssh connection
+     *      host - The hostname or IP address
      *      controlMasterSocket - The socket file to use for connection sharing (see ControlPath in ssh_config(5))
      *      controlLifetime - The socket file to use for connection sharing (see ControlPersist in ssh_config(5))
      */
-    public function __construct($array)
+    public function __construct($properties)
     {
-        if (is_string($array)) {
-            $array = array(
-                'host' => $array,
-            );
+        if (is_string($properties)) {
+            $userHost = explode('@', $properties);
+            if (count($userHost) === 2) {
+                $properties = array(
+                    'user' => $userHost[0],
+                    'host' => $userHost[1],
+                );
+            } else {
+                $properties = array(
+                    'host' => $properties,
+                );
+            }
         }
 
         // Set some nice default options
-        $array = array_merge(array(
-            'controlMasterSocket' => sprintf(
-                '~/.ssh/tempo_ctlmstr_%s',
-                $array['host']
-            ),
+        $defaultProperties = array(
             'controlLifetime' => '10m',
-        ), $array);
+        );
 
-        parent::__construct($array);
+        parent::__construct(array_merge($defaultProperties, $properties));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         $name = $this['host'];
@@ -51,8 +58,19 @@ class Remote extends AbstractNode
         return $name;
     }
 
+    /**
+     * @throws \RuntimeException
+     */
     private function establishControlMaster()
     {
+        // Default the controlMasterSocket to ~/.ssh/tempo_ctlmstr_<hash of $this>
+        if (!isset($this['controlMasterSocket'])) {
+            $this['controlMasterSocket'] = sprintf(
+                '~/.ssh/tempo_ctlmstr_%s',
+                md5(print_r((array)$this, true))
+            );
+        }
+
         // Check if control master socket already exists
         $returnVal = null;
         $checkCommand = sprintf(

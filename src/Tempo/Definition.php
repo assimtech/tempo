@@ -4,13 +4,14 @@ namespace Tempo;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
+use Symfony\Component\Console\Command\Command;
 
 class Definition
 {
     /** @var \Tempo\Environment[] $environments */
     private $environments;
 
-    /** @var \Tempo\Command[] $commands */
+    /** @var \Symfony\Component\Console\Command\Command[] $commands */
     private $commands;
 
     public function __construct()
@@ -76,7 +77,7 @@ class Definition
     }
 
     /**
-     * @param \Tempo\Command $command
+     * @param \Symfony\Component\Console\Command\Command $command
      * @return self
      */
     public function addCommand(Command $command)
@@ -87,7 +88,7 @@ class Definition
     }
 
     /**
-     * @param \Tempo\Command[] $commands
+     * @param \Symfony\Component\Console\Command\Command[] $commands
      * @return self
      */
     public function addCommands($commands)
@@ -100,7 +101,7 @@ class Definition
     }
 
     /**
-     * @return \Tempo\Command[]
+     * @return \Symfony\Component\Console\Command\Command[]
      */
     public function getCommands()
     {
