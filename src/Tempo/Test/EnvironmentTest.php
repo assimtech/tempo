@@ -7,6 +7,9 @@ use Tempo\Environment;
 use Tempo\Node\Local;
 use Tempo\Node\Remote;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class EnvironmentTest extends PHPUnit_Framework_TestCase
 {
     public function testName()

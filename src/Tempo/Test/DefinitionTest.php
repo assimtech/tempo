@@ -31,11 +31,11 @@ class DefinitionTest extends PHPUnit_Framework_TestCase
 
         $environmentName = 'test';
 
-        $environment = new Environment($environmentName);
-        $tempo->addEnvironment($environment);
+        $environment1 = new Environment($environmentName);
+        $tempo->addEnvironment($environment1);
 
-        $aDifferentEnvironment = new Environment($environmentName);
-        $tempo->addEnvironment($aDifferentEnvironment);
+        $environment2 = new Environment($environmentName);
+        $tempo->addEnvironment($environment2);
     }
 
     public function testAddEnvironments()
