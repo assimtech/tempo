@@ -11,9 +11,9 @@ class Local extends AbstractNode
      *
      * {@inheritdoc}
      */
-    public function run($commands)
+    public function run($command)
     {
-        $process = new Process($commands);
+        $process = new Process($command);
         $process->setTimeout(null);
         $process->mustRun();
 

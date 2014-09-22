@@ -7,10 +7,10 @@ use ArrayObject;
 abstract class AbstractNode extends ArrayObject
 {
     /**
-     * @param string $commands Command(s) to run
+     * @param string $command Command to run
      * @return string The command output
      */
-    abstract public function run($commands);
+    abstract public function run($command);
 
     /**
      * @return string

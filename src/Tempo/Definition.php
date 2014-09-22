@@ -8,10 +8,14 @@ use Symfony\Component\Console\Command\Command;
 
 class Definition
 {
-    /** @var \Tempo\Environment[] $environments */
+    /**
+     * @var \Tempo\Environment[] $environments
+     */
     private $environments;
 
-    /** @var \Symfony\Component\Console\Command\Command[] $commands */
+    /**
+     * @var \Symfony\Component\Console\Command\Command[] $commands
+     */
     private $commands;
 
     public function __construct()

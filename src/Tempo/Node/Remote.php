@@ -35,6 +35,10 @@ class Remote extends AbstractNode
         // Set some nice default options
         $defaultProperties = array(
             'controlLifetime' => '10m',
+            'controlMasterSocket' => sprintf(
+                '~/.ssh/tempo_ctlmstr_%s',
+                md5(print_r($properties, true))
+            ),
         );
 
         parent::__construct(array_merge($defaultProperties, $properties));
@@ -63,14 +67,6 @@ class Remote extends AbstractNode
      */
     private function establishControlMaster()
     {
-        // Default the controlMasterSocket to ~/.ssh/tempo_ctlmstr_<hash of $this>
-        if (!isset($this['controlMasterSocket'])) {
-            $this['controlMasterSocket'] = sprintf(
-                '~/.ssh/tempo_ctlmstr_%s',
-                md5(print_r((array)$this, true))
-            );
-        }
-
         // Check if control master socket already exists
         $returnVal = null;
         $checkCommand = sprintf(
@@ -82,10 +78,6 @@ class Remote extends AbstractNode
             return;
         }
 
-        printf(
-            "Establishing a connection to: %s\n",
-            $this
-        );
         $args = array(
             '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin).
             '-T', // Disable pseudo-tty allocation.
@@ -124,7 +116,7 @@ class Remote extends AbstractNode
      *
      * {@inheritdoc}
      */
-    public function run($commands)
+    public function run($command)
     {
         $this->establishControlMaster();
 
@@ -132,7 +124,7 @@ class Remote extends AbstractNode
             "ssh -S %s %s %s",
             $this['controlMasterSocket'],
             $this,
-            escapeshellarg($commands)
+            escapeshellarg($command)
         ));
         $process->setTimeout(null);
         $process->mustRun();

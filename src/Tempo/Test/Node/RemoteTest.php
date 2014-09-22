@@ -16,6 +16,15 @@ class RemoteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("$host", (string)$node);
     }
 
+    public function testUserAtHost()
+    {
+        $userAtHost = 'user@localhost';
+
+        $node = new Remote($userAtHost);
+
+        $this->assertEquals($userAtHost, (string)$node);
+    }
+
     public function testUserHost()
     {
         $user = 'user';

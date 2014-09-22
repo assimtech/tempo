@@ -21,12 +21,6 @@ class Loader
             ));
         }
         $tempo = require $tempoDefinitionPath;
-        if (!$tempo) {
-            throw new DomainException(sprintf(
-                'An instance of \Tempo\Definition must be defined and returned in %s',
-                $tempoDefinitionPath
-            ));
-        }
         if (!$tempo instanceof Definition) {
             throw new DomainException(sprintf(
                 'Object returned by %s must be an instance of \Tempo\Definition',

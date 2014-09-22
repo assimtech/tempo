@@ -48,14 +48,14 @@ class Environment extends ArrayObject
         } elseif (is_array($roles)) {
             foreach ($roles as $role) {
                 if (!is_string($role)) {
-                    throw InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         'Environment: %s, roles must be a string or array of strings',
                         $this
                     ));
                 }
             }
         } else {
-            throw InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Environment: %s, roles must be a string or array of strings',
                 $this
             ));
@@ -97,7 +97,7 @@ class Environment extends ArrayObject
                 throw new InvalidArgumentException(sprintf(
                     'You must specify the node name because environment %s has more than 1 node: %s',
                     $this,
-                    print_r($nodeNames, true)
+                    implode(', ', $nodeNames)
                 ));
             }
 
@@ -123,7 +123,8 @@ class Environment extends ArrayObject
 
         if (!is_string($role)) {
             throw new InvalidArgumentException(sprintf(
-                'Environment: %s, role must be a string or null for all nodes'
+                'Environment: %s, role must be a string or null for all nodes',
+                $this
             ));
         }
 
