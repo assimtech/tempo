@@ -11,7 +11,7 @@ A node can be defined by any host or IP address which is valid in the network yo
     $production = new Tempo\Environment('production');
     $tempo->addEnvironment($production);
 
-    $server = new Tempo\Node('example.com');
+    $server = new Tempo\Node\Remote('example.com');
     $production->addNode($server);
 
     return $tempo;
@@ -24,7 +24,7 @@ Optionally, a node can also be given a role or multiple roles when registered in
     // ...
 
     // Give our node a single role
-    $server = new Tempo\Node('example.com');
+    $server = new Tempo\Node\Remote('example.com');
     $production->addNode($server, 'web');
 
     // Or many at once
@@ -33,6 +33,18 @@ Optionally, a node can also be given a role or multiple roles when registered in
         'cache',
     ));
 
-    // example.com is now our web, db and cache server, we can later use this to do things to it in a Strategy
+    // ...
+
+
+If you have assigned role(s) to a node, you will later be able to get all your 'role' node in your command definitions:
+
+    // tempo.php
+
+    // ...
+
+    $webNodes = $production->getNodes('web');
+    foreach ($webNodes as $webNode) {
+        $webNode->run($someCommand);
+    }
 
     // ...
