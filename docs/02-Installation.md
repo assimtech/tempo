@@ -19,8 +19,8 @@ Add a dependency to your project's `composer.json`.
         }
     }
 
-This will make tempo share your autoloader so you can reference any [Environments](docs/03-Environments.md),
-[Nodes](docs/04-Nodes.md), [Commands](docs/05-Commands.md) or [Tasks](docs/06-Tasks.md) from either tempo's core or
+This will make tempo share your autoloader so you can reference any [Environments](03-Environments.md),
+[Nodes](04-Nodes.md), [Commands](05-Commands.md) or [Tasks](06-Tasks.md) from either tempo's core or
 your project's namespace without having to do any special loading in your `tempo.php`.
 
 
