@@ -15,7 +15,7 @@ Tempo allows you to express how software is deployed to your servers using a few
 Add a development dependency to your project's `composer.json`.  Generally you aren't likely to want tempo installed on your production nodes, only your development machine.
 
     {
-        "require-dev": {
+        "require": {
             "kralos/tempo": "dev-master"
         }
     }

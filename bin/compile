@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Tempo\Phar\Compiler;
+
+$compiler = new Compiler();
+
+try {
+    $compiler->compile();
+} catch (Exception $e) {
+    print('Failed to compile tempo.phar'.PHP_EOL);
+    print('============================'.PHP_EOL);
+    printf('%s - %s'.PHP_EOL,
+        get_class($e),
+        $e->getMessage()
+    );
+    printf('At %s:%d'.PHP_EOL,
+        $e->getFile(),
+        $e->getLine()
+    );
+
+    exit(1);
+}

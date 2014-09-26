@@ -3,8 +3,12 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$tempo = Tempo\Loader::loadTempoDefinition();
+$applicationName = 'tempo';
+$applicationVersion = 'dev-master';
 
-$application = new Symfony\Component\Console\Application();
+$application = new Symfony\Component\Console\Application($applicationName, $applicationVersion);
+
+$tempo = Tempo\Loader::loadTempoDefinition();
 $application->addCommands($tempo->getCommands());
+
 $application->run();

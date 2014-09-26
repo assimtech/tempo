@@ -1,11 +1,11 @@
 <?php
 
-namespace Tempo;
+namespace Tempo\Task;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Task
+abstract class AbstractTask
 {
     /** @var \Symfony\Component\Console\Input\InputInterface $input */
     protected $input;

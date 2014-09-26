@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+Phar::mapPhar('tempo.phar');
+
+require 'phar://tempo.phar/bin/tempo';
+
+__HALT_COMPILER();

@@ -7,7 +7,8 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/console": "~2",
-        "symfony/process": "~2"
+        "symfony/process": "~2",
+        "symfony/finder": "~2"
     },
     "require-dev": {
         "pdepend/pdepend": "~2",
