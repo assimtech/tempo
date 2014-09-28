@@ -99,10 +99,11 @@ final class Compiler
 
     private function checkVersion()
     {
-        $version = trim($this->local->run('git name-rev --tags --name-only HEAD'));
-        if ($version === 'undefined') {
+        $namerev = trim($this->local->run('git name-rev --tags --name-only HEAD'));
+        if ($namerev === 'undefined') {
             throw new RuntimeException('You must be on a tagged version to compile a phar');
         }
+        $version = preg_replace('/\^.*$/', '', $namerev);
 
         $tempoBinContents = file_get_contents($this->baseDir.'/bin/tempo');
         $matches = array();
