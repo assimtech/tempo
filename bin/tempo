@@ -8,7 +8,7 @@ if (file_exists(__DIR__ . '/../../../autoload.php')) {
 }
 
 $applicationName = 'tempo';
-$applicationVersion = '0.0.02';
+$applicationVersion = '0.0.03';
 
 $application = new Symfony\Component\Console\Application($applicationName, $applicationVersion);
 
