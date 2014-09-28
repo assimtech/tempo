@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempo\Test\Task;
+namespace Assimtech\Tempo\Test\Task;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,11 +13,11 @@ class AbstractTaskTest extends PHPUnit_Framework_TestCase
         $mockInputInterface = $this->getMock('Symfony\Component\Console\Input\InputInterface');
         $mockOutputInterface = $this->getMock('Symfony\Component\Console\Output\OutputInterface');
 
-        $mockTask = $this->getMockForAbstractClass('Tempo\Task\AbstractTask', array(
+        $mockTask = $this->getMockForAbstractClass('Assimtech\Tempo\Task\AbstractTask', array(
             $mockInputInterface,
             $mockOutputInterface,
         ));
 
-        $this->assertInstanceOf('Tempo\Task\AbstractTask', $mockTask);
+        $this->assertInstanceOf('Assimtech\Tempo\Task\AbstractTask', $mockTask);
     }
 }

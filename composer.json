@@ -1,8 +1,8 @@
 {
-    "name": "kralos/tempo",
+    "name": "assimtech/tempo",
     "type": "library",
-    "description": "Automated deployment for server side software",
-    "homepage": "https://github.com/kralos/tempo",
+    "description": "A php tool for scripting executing commands on local and remote hosts",
+    "homepage": "https://github.com/assimtech/tempo",
     "licence": "MIT",
     "require": {
         "php": ">=5.3.3",
@@ -19,7 +19,10 @@
     },
     "autoload": {
         "psr-0": {
-            "Tempo": "src"
+            "Assimtech\\Tempo": "src"
         }
-    }
+    },
+    "bin": [
+        "bin/tempo"
+    ]
 }

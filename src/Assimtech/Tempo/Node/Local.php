@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempo\Node;
+namespace Assimtech\Tempo\Node;
 
 use Symfony\Component\Process\Process;
 

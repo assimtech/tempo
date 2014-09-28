@@ -1,9 +1,9 @@
 <?php
 
-namespace Tempo\Test;
+namespace Assimtech\Tempo\Test;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Loader;
+use Assimtech\Tempo\Loader;
 
 class LoaderTest extends PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class LoaderTest extends PHPUnit_Framework_TestCase
 
         $tempo = Loader::loadTempoDefinition();
 
-        $this->assertInstanceOf('Tempo\Definition', $tempo);
+        $this->assertInstanceOf('Assimtech\Tempo\Definition', $tempo);
     }
 
     /**
@@ -46,7 +46,7 @@ class LoaderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \DomainException
      * @expectedExceptionMessage Object returned by
-     * @expectedExceptionMessage tempo.php must be an instance of \Tempo\Definition
+     * @expectedExceptionMessage tempo.php must be an instance of \Assimtech\Tempo\Definition
      */
     public function testWithInvalidDefinition()
     {

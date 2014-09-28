@@ -1,8 +1,8 @@
 <?php
 
-namespace Tempo\Phar;
+namespace Assimtech\Tempo\Phar;
 
-use Tempo\Node\Local;
+use Assimtech\Tempo\Node\Local;
 use Symfony\Component\Finder\Finder;
 use Phar;
 use RuntimeException;
@@ -21,14 +21,14 @@ final class Compiler
     private $baseDir;
 
     /**
-     * @var \Tempo\Node\Local $local
+     * @var \Assimtech\Tempo\Node\Local $local
      */
     private $local;
 
     public function __construct()
     {
         $this->pharFile = 'tempo.phar';
-        $this->baseDir = realpath(__DIR__.'/../../../');
+        $this->baseDir = realpath(__DIR__.'/../../../../');
         $this->local = new Local();
     }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tempo\Test\Node;
+namespace Assimtech\Tempo\Test\Node;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Node\Remote;
+use Assimtech\Tempo\Node\Remote;
 
 class RemoteTest extends PHPUnit_Framework_TestCase
 {
@@ -14,6 +14,15 @@ class RemoteTest extends PHPUnit_Framework_TestCase
         $node = new Remote($host);
 
         $this->assertEquals("$host", (string)$node);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage host is mandatory
+     */
+    public function testNoHost()
+    {
+        $node = new Remote('');
     }
 
     public function testUserAtHost()

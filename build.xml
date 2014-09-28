@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="kralos/tempo" default="dev">
+<project name="assimtech/tempo" default="dev">
 
     <target name="dev" depends="lint,cpd,cs,md,test"/>
 

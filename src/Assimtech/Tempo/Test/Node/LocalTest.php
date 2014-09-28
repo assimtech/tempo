@@ -1,9 +1,9 @@
 <?php
 
-namespace Tempo\Test\Node;
+namespace Assimtech\Tempo\Test\Node;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Node\Local;
+use Assimtech\Tempo\Node\Local;
 
 class LocalTest extends PHPUnit_Framework_TestCase
 {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-    backupGlobals               = "false"
-    bootstrap                   = "vendor/autoload.php"
+    backupGlobals = "false"
+    bootstrap = "vendor/autoload.php"
 >
     <testsuites>
         <testsuite name="Tempo Test Suite">
-            <directory suffix="Test.php">src/Tempo</directory>
+            <directory suffix="Test.php">src/Assimtech/Tempo</directory>
         </testsuite>
     </testsuites>
 
@@ -13,8 +13,8 @@
         <whitelist>
             <directory suffix=".php">src</directory>
             <exclude>
-                <directory suffix=".php">src/Tempo/Test</directory>
-                <directory>src/Tempo/Phar</directory>
+                <directory suffix=".php">src/Assimtech/Tempo/Test</directory>
+                <directory>src/Assimtech/Tempo/Phar</directory>
             </exclude>
         </whitelist>
     </filter>

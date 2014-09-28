@@ -1,19 +1,23 @@
 <?php
 
-namespace Tempo;
+namespace Assimtech\Tempo;
 
 use DomainException;
 
 class Loader
 {
     /**
-     * @return \Tempo\Definition
+     * @param string $dir the directory where your `tempo.php` resides, defaults to current working directory
+     * @return \Assimtech\Tempo\Definition
      * @throws \DomainException
      */
-    public static function loadTempoDefinition()
+    public static function loadTempoDefinition($dir = null)
     {
-        $cwd = getcwd();
-        $tempoDefinitionPath = $cwd . '/tempo.php';
+        if ($dir === null) {
+            $dir = getcwd();
+        }
+
+        $tempoDefinitionPath = $dir . '/tempo.php';
         if (!file_exists($tempoDefinitionPath)) {
             throw new DomainException(sprintf(
                 '%s is missing',
@@ -23,7 +27,7 @@ class Loader
         $tempo = require $tempoDefinitionPath;
         if (!$tempo instanceof Definition) {
             throw new DomainException(sprintf(
-                'Object returned by %s must be an instance of \Tempo\Definition',
+                'Object returned by %s must be an instance of \Assimtech\Tempo\Definition',
                 $tempoDefinitionPath
             ));
         }

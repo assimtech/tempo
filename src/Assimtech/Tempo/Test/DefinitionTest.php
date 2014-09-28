@@ -1,10 +1,10 @@
 <?php
 
-namespace Tempo\Test;
+namespace Assimtech\Tempo\Test;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Definition;
-use Tempo\Environment;
+use Assimtech\Tempo\Definition;
+use Assimtech\Tempo\Environment;
 use Symfony\Component\Console\Command\Command;
 
 class DefinitionTest extends PHPUnit_Framework_TestCase

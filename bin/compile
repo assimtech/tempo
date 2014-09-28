@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Tempo\Phar\Compiler;
+use Assimtech\Tempo\Phar\Compiler;
 
 $compiler = new Compiler();
 

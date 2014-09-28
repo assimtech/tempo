@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempo;
+namespace Assimtech\Tempo;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command;
 class Definition
 {
     /**
-     * @var \Tempo\Environment[] $environments
+     * @var \Assimtech\Tempo\Environment[] $environments
      */
     private $environments;
 
@@ -25,7 +25,7 @@ class Definition
     }
 
     /**
-     * @param \Tempo\Environment $environment
+     * @param \Assimtech\Tempo\Environment $environment
      * @return self
      * @throws \InvalidArgumentException
      */
@@ -44,7 +44,7 @@ class Definition
     }
 
     /**
-     * @param \Tempo\Environment[] $environments
+     * @param \Assimtech\Tempo\Environment[] $environments
      * @return self
      */
     public function addEnvironments($environments)
@@ -58,7 +58,7 @@ class Definition
 
     /**
      * @param string $name
-     * @return \Tempo\Environment
+     * @return \Assimtech\Tempo\Environment
      */
     public function getEnvironment($name)
     {
@@ -73,7 +73,7 @@ class Definition
     }
 
     /**
-     * @return \Tempo\Environment[]
+     * @return \Assimtech\Tempo\Environment[]
      */
     public function getEnvironments()
     {

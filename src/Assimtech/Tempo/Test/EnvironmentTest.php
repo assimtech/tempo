@@ -1,11 +1,11 @@
 <?php
 
-namespace Tempo\Test;
+namespace Assimtech\Tempo\Test;
 
 use PHPUnit_Framework_TestCase;
-use Tempo\Environment;
-use Tempo\Node\Local;
-use Tempo\Node\Remote;
+use Assimtech\Tempo\Environment;
+use Assimtech\Tempo\Node\Local;
+use Assimtech\Tempo\Node\Remote;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -186,5 +186,38 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
         $environment->addNode($node);
 
         $environment->getNodes('nonexistant');
+    }
+
+    public function testAddNodes()
+    {
+        $localhost = new Local();
+        $remotehost = new Remote('remotehost');
+
+        $environment = new Environment('test');
+
+        $nodes = array(
+            $localhost,
+            $remotehost,
+        );
+        $environment->addNodes($nodes);
+
+        $this->assertEquals($nodes, array_values($environment->getNodes()));
+    }
+
+    public function testAddNodesWithRoles()
+    {
+        $localhost = new Local();
+        $remotehost = new Remote('remotehost');
+        $role = 'myrole';
+
+        $environment = new Environment('test');
+
+        $nodes = array(
+            $localhost,
+            $remotehost,
+        );
+        $environment->addNodes($nodes, $role);
+
+        $this->assertEquals($nodes, array_values($environment->getNodes($role)));
     }
 }

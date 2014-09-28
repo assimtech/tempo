@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempo;
+namespace Assimtech\Tempo;
 
 use ArrayObject;
 use InvalidArgumentException;
@@ -11,10 +11,10 @@ class Environment extends ArrayObject
     /** @var string $name */
     private $name;
 
-    /** @var \Tempo\Node\AbstractNode[] $nodes */
+    /** @var \Assimtech\Tempo\Node\AbstractNode[] $nodes */
     private $nodes;
 
-    /** @var \Tempo\Node\AbstractNode[][] $roles */
+    /** @var \Assimtech\Tempo\Node\AbstractNode[][] $roles */
     private $roles;
 
     /**
@@ -36,7 +36,7 @@ class Environment extends ArrayObject
     }
 
     /**
-     * @param \Tempo\Node\AbstractNode $node
+     * @param \Assimtech\Tempo\Node\AbstractNode $node
      * @param string|array $roles Optional for grouping of like nodes e.g. fep, web, db
      * @return self
      * @throws \InvalidArgumentException
@@ -81,8 +81,22 @@ class Environment extends ArrayObject
     }
 
     /**
+     * @param \Assimtech\Tempo\Node\AbstractNode[] $nodes
+     * @param string|array $roles Optional for grouping of like nodes e.g. fep, web, db
+     * @return self
+     */
+    public function addNodes($nodes, $roles = array())
+    {
+        foreach ($nodes as $node) {
+            $this->addNode($node, $roles);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string $name Name is optional if exactly one node is in the environment
-     * @return \Tempo\Node\AbstractNode
+     * @return \Assimtech\Tempo\Node\AbstractNode
      * @throws \InvalidArgumentException
      * @throws \OutOfBoundsException
      */
