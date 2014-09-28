@@ -22,5 +22,5 @@ abstract class AbstractTask
     /**
      * Perform the task
      */
-    public abstract function run();
+    abstract public function run();
 }
