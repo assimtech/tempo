@@ -14,7 +14,7 @@ If your project is already using composer, add a dependency to your project's `c
 
     {
         "require": {
-            "assimtech/tempo": "dev-master"
+            "assimtech/tempo": "0.*"
         }
     }
 
@@ -47,6 +47,6 @@ This is how you will want to use tempo if you are contributing to it or want to 
     cd tempo
     composer install
 
-Then we would recommend creating a symbolic link to `tempo/bin/tempo` from your `~/bin` directory or a systemwide `bin`.
+Then we would recommend creating a symbolic link to `bin/tempo` from your `~/bin` directory or a systemwide `bin`.
 
 If you decide to checkout tags later on, (upgrade / downgrade), don't forget to `composer install` again.

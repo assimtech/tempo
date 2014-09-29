@@ -174,6 +174,7 @@ Suppose we want to make the above `Deploy` example more robust.
                     escapeshellarg($releasePath)
                 ));
                 $output->writeln(sprintf('We are live on %s', $remote));
+
                 // Warm the cache
                 $remote->run(sprintf(
                     '%s/app/console --env=%s cache:warm',
@@ -181,7 +182,7 @@ Suppose we want to make the above `Deploy` example more robust.
                     escapeshellarg($this->env)
                 ));
             } catch (Exception $e) {
-                $output->writeln('Copy failed, rolling back');
+                $output->writeln('Cache warm failed, rolling back');
                 $remote->run(sprintf(
                     'rm -f %1$s && ln -s %2$s %1$s',
                     escapeshellarg($currentPath),

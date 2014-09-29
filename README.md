@@ -73,9 +73,9 @@ Run tempo from within the root of your project:
 Try adding more environments / servers / commands
 
 
-As you might expect, the `tempo.php` will eventually become a little bloated. Use pre-defined [Tasks](docs/06-Tasks.md)
-to help save some time and make the definition easier to read.  If you have a Task that should part of the core Tempo
-code base [please let us know](docs/07-Contributing.md).
+As you might expect, the `tempo.php` will eventually become a little bloated. Use pre-defined
+[Commands](docs/05-Commands.md) and [Tasks](docs/06-Tasks.md) to help save some time and make the definition easier
+to read. If you have a Task that should part of the core Tempo code base [please let us know](docs/07-Contributing.md).
 
 
 ## Documentation

@@ -1,7 +1,7 @@
 {
     "name": "assimtech/tempo",
     "type": "library",
-    "description": "A php tool for scripting executing commands on local and remote hosts",
+    "description": "A scripting tool for running commands on local or remote nodes",
     "homepage": "https://github.com/assimtech/tempo",
     "license": "MIT",
     "require": {
