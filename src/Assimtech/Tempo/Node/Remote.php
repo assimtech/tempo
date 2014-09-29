@@ -144,7 +144,7 @@ class Remote extends AbstractNode
         if (isset($this['port'])) {
             $args[] = sprintf(
                 '-p %d', // The ssh port
-                escapeshellarg($this['port'])
+                $this['port']
             );
         }
 
@@ -186,7 +186,7 @@ class Remote extends AbstractNode
         if (isset($this['port'])) {
             $args[] = sprintf(
                 '-p %d', // The ssh port
-                escapeshellarg($this['port'])
+                $this['port']
             );
         }
 
