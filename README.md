@@ -15,7 +15,7 @@ a lot of power to do all kinds of advanced things to achieve your task.
 
 ## Quick start
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.0.03/tempo.phar).
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.0.04/tempo.phar).
 If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects.
 
 
