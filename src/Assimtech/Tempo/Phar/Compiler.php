@@ -107,14 +107,13 @@ final class Compiler
 
         $tempoBinContents = file_get_contents($this->baseDir.'/bin/tempo');
         $matches = array();
-        if (!preg_match('/^\$applicationVersion = \'(.*)\';$/m', $tempoBinContents, $matches)) {
-            throw new RuntimeException('bin/tempo must contain "$applicationVersion = \'\';"');
+        if (!preg_match('/Application\(\'tempo\', \'(.+)\'\);$/m', $tempoBinContents, $matches)) {
+            throw new RuntimeException('bin/tempo must contain "Application(\'tempo\', \'<version>\');"');
         }
 
         if ($matches[1] !== $version) {
             throw new RuntimeException(sprintf(
-                'bin/tempo - $applicationVersion = \'%s\'; does not match git tag (%s),'
-                .' please update it before compiling',
+                'bin/tempo - version \'%s\' does not match git tag \'%s\', please update it before compiling',
                 $matches[1],
                 $version
             ));

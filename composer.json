@@ -3,7 +3,7 @@
     "type": "library",
     "description": "A php tool for scripting executing commands on local and remote hosts",
     "homepage": "https://github.com/assimtech/tempo",
-    "licence": "MIT",
+    "license": "MIT",
     "require": {
         "php": ">=5.3.3",
         "symfony/console": "~2",

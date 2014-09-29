@@ -7,10 +7,7 @@ if (file_exists(__DIR__ . '/../../../autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
 }
 
-$applicationName = 'tempo';
-$applicationVersion = 'dev-master';
-
-$application = new Symfony\Component\Console\Application($applicationName, $applicationVersion);
+$application = new Symfony\Component\Console\Application('tempo', 'dev-master');
 
 $tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
 $application->addCommands($tempo->getCommands());
