@@ -2,8 +2,9 @@
 
 ## As a PHP Archive (PHAR) - This is the simplest way to use tempo
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.0.04/tempo.phar) and place wherever you want. If you place it in `~/bin/tempo` and make it executable you will be
-able to run `tempo` from any of your projects (don't forget to restart your terminal if you just created `~/bin`).
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.0.04/tempo.phar) and place where you want.
+If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects. Don't
+forget to restart your terminal if you just created `~/bin`.
 
 You could also add it to a systemwide `bin` directory such as `/usr/local/bin/tempo`.
 
@@ -23,7 +24,7 @@ This will make tempo share your autoloader so you can reference any [Environment
 namespace without having to do any special loading in your `tempo.php`.
 
 
-### As part of your existing symfony 2 console application
+### As part of your existing Symfony 2 console application
 
 Since tempo exposes commands compatible with a `Symfony\Component\Console\Application`, it is possible to add your tempo
 commands to your exiting Symfony Console application.  This would allow you to run tempo from your normal application's

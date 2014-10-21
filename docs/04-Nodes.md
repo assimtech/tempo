@@ -44,14 +44,56 @@ Options can be set on a Remote node through the constructor and will be accessib
     ));
 
 
-### ControlMaster (ssh connection sharing)
+#### host
+
+Mandatory - `string`
+
+This is the hostname or IP used when establishing the ssh connection to the node. This option is configurable in the
+shortcut form:
+
+    $node = new Assimtech\Tempo\Node\Remote('server1.example.com');
+
+Or in the full form:
+
+    $node = new Assimtech\Tempo\Node\Remote(array(
+        'host' => 'server1.example.com',
+    ));
+
+
+#### user
+
+Optional - `string` (Defaults to the current user on your terminal)
+
+This is the username used when establishing the ssh connection to the node. This option is configurable in the shortcut
+form:
+
+    $node = new Assimtech\Tempo\Node\Remote('username@server1.example.com');
+
+Or in the full form:
+
+    $node = new Assimtech\Tempo\Node\Remote(array(
+        'user' => 'username',
+        'host' => 'server1.example.com',
+    ));
+
+
+#### port
+
+Optional - `integer` (Defaults to 22)
+
+This is the port used when establishing the ssh connection to the node.
+
+    $node = new Assimtech\Tempo\Node\Remote(array(
+        'host' => 'server1.example.com',
+        'port' => 1234,
+    ));
+
+
+#### ControlMaster configuration
 
 Tempo remote nodes can use a [ControlMaster](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5)
 connection to share an ssh connection for successive commands to the same remote node without re-authenticating etc.
 This is enabled by default.
-
-
-#### ControlMaster configuration
 
 The following options are available:
 

@@ -5,13 +5,6 @@
 Tempo is a scripting tool for running commands on local or remote nodes. It was originally developed to script complex
 `php` project deployments however can be used for all kinds of tasks (e.g. unix user management, package updates etc).
 
-Tempo allows you to express some sets of commands to run using a few simple definitions.  It leverages native ssh client
-and therefore does not depend on any special php libraries.  This also means it adopts the same authentication setup as
-your normal shell so if you use an agent or keychain, tempo will use it.
-
-Tempo definitions are written in PHP because it's a language you are hopefully already familiar with. It also gives you
-a lot of power to do all kinds of advanced things to achieve your task.
-
 
 ## Quick start
 
@@ -29,27 +22,27 @@ Create a `tempo.php` file in the root of your project containing the following:
     $tempo = new Tempo\Definition();
 
     // Environments
-    $environment1 = new Tempo\Environment('test');
-    $tempo->addEnvironment($environment1);
+    $testEnv = new Tempo\Environment('test');
+    $tempo->addEnvironment($testEnv);
 
     // Nodes
     $server1 = new Tempo\Node\Remote('server1.example.com');
-    $environment1->addNode($server1);
+    $testEnv->addNode($server1);
 
     // Commands
-    foreach ($tempo->getEnvironments() as $environment) {
-        $whoami = new Command($environment.':whoami');
-        $whoami->setCode(function ($input, $output) use ($environment) {
-            $node = $environment->getNode();
+    foreach ($tempo->getEnvironments() as $env) {
+        $whoami = new Command($env.':whoami');
+        $whoami->setCode(function ($input, $output) use ($env) {
+            $node = $env->getNode();
 
             $iam = $node->run('whoami');
             $output->write($iam);
         });
         $tempo->addCommand($whoami);
 
-        $whereami = new Command($environment.':whereami');
-        $whereami->setCode(function ($input, $output) use ($environment) {
-            $node = $environment->getNode();
+        $whereami = new Command($env.':whereami');
+        $whereami->setCode(function ($input, $output) use ($env) {
+            $node = $env->getNode();
 
             $iam = $node->run('hostname');
             $output->write($iam);
@@ -61,7 +54,7 @@ Create a `tempo.php` file in the root of your project containing the following:
 
 
 Change "server1.example.com" to a server you have ssh access to.
-If you need to change username / port etc, please see the documentation on how to setup a [Node](docs/02-Nodes.md)
+If you need to change username / port etc, please see the documentation on how to setup a [Node](docs/04-Nodes.md)
 
 
 Run tempo from within the root of your project:

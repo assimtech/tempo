@@ -57,7 +57,7 @@ class Remote extends AbstractNode
                     '~/.ssh/tempo_ctlmstr_%s',
                     md5(print_r($properties, true))
                 ),
-                'controlPersist' => 'yes',
+                'controlPersist' => '2m',
                 'closeControlMasterOnDestruct' => true,
             ), $properties);
         }

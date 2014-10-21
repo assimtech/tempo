@@ -1,6 +1,6 @@
 # Environments
 
-An environment is a group of server(s) where your software may be deployed to. It is defined simply by a name.
+An environment is a group of server(s), it is defined simply by a name.
 
 Common examples include:
 
@@ -29,7 +29,7 @@ properties on it and access them later.
 
 ## Working with nodes
 
-An Environment is a collection of one or more [Nodes](04-Nodes.md). You can add, remove and group (see Roles)
+An Environment is a collection of one or more [Nodes](04-Nodes.md). You can add, remove and group (see Roles below)
 [Nodes](04-Nodes.md) within an environment.
 
 
@@ -70,13 +70,13 @@ more than a name for a group of [nodes](04-Nodes.md).
 
 #### Adding nodes
 
-To assign a role to a [node](04-Nodes.md), it must be given while adding the [node(s)](04-Nodes.md)
+To assign a role to a [node](04-Nodes.md), it must be given while adding the [node(s)](04-Nodes.md).
 
-    $environment->addNode($node, 'db');
+    $environment->addNode($dbNode, 'db');
 
     $environment->addNodes(array(
-        $node1,
-        $node2,
+        $webNode1,
+        $webNode2,
     ), 'web');
 
 
@@ -95,14 +95,14 @@ This will allow us to later get [nodes](04-Nodes.md) from the environment by the
 
 If you have [node(s)](04-Nodes.md) that act as multiple roles, you could define all the roles when adding them.
 
-    $environment->addNode($node, array(
+    $environment->addNode($storageNode, array(
         'db',
         'cache',
     ));
 
     $environment->addNodes(array(
-        $node1,
-        $node2,
+        $applicationNode1,
+        $applicationNode2,
     ), array(
         'web',
         'cron',
