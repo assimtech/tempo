@@ -18,6 +18,7 @@ pointing at the current release. The software will be built in a new release dir
 live, we remove the current symlink and create a new one pointing at our new release directory. This is how
 [Capistrano](http://capistranorb.com/) does deployments be default.
 
+```php
     <?php
 
     use Assimtech\Tempo;
@@ -70,6 +71,7 @@ live, we remove the current symlink and create a new one pointing at our new rel
             $output->writeln(sprintf('We are live on %s', $remote));
         }
     }
+```
 
 
 ## Rolling back
@@ -82,6 +84,7 @@ Say your command copies something to a new release directory then moves the curr
 warm. There are two distinct rollback checkpoints; one beginning after the copy has started and one after symlink has
 been switched. To roll this back you could:
 
+```php
     try {
         // copy to new release directory
     } catch (Exception $e) {
@@ -98,12 +101,14 @@ been switched. To roll this back you could:
         // just incase
         // Abort
     }
+```
 
 
 ### Rollback example
 
 Suppose we want to make the above `Deploy` example more robust.
 
+```php
     <?php
 
     use Assimtech\Tempo;
@@ -192,3 +197,4 @@ Suppose we want to make the above `Deploy` example more robust.
             }
         }
     }
+```
