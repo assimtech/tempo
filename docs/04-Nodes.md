@@ -160,7 +160,7 @@ Turns connection sharing via ssh's ControlMaster on or off.
 Optional - `string` (Defaults to `~/.ssh/tempo_<node name>`)
 
 The path to the socket file of the ControlMaster connection
-See "ControlPath" in <http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5>
+See "ControlPath" in [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5)
 
 
 ##### ssh control ControlPersist
@@ -168,15 +168,15 @@ See "ControlPath" in <http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man
 Optional - `string` (Defaults to `10m` meaning leave the control master connection open for up to 10 minutes)
 
 The policy for leaving the ControlMaster connection open.
-See "ControlPersist" in <http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5>
+See "ControlPersist" in [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5)
 
 If set to `yes`, we strongly recommend setting "closeOnDestruct" to `true`. This will close the
 ControlMaster connection when tempo exits. Even with this set, it is possible if php dies, that a control socket could
 be left open. We strongly recommend you set this cautiously. Even if your control connection expires halfway through a
 tempo command, tempo will attempt to re-establish it.
 
-Other options include times compatible with
-[sshd_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/sshd_config.5).
+Other options include times compatible with the TIME FORMATS section of
+[sshd_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/sshd_config.5)
 
 E.g. `10m` will mean the ControlMaster will be left open for 10 minutes. This could be used in conjunction with
 "closeOnDestruct" = `false` to allow successive tempo commands to re-use the first one's connection.
