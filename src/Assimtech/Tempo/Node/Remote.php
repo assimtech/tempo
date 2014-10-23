@@ -2,26 +2,32 @@
 
 namespace Assimtech\Tempo\Node;
 
-use Symfony\Component\Process\Process;
 use InvalidArgumentException;
-use RuntimeException;
+use Symfony\Component\Process\ProcessBuilder;
 
 class Remote extends AbstractNode
 {
+    /**
+     * @var \Symfony\Component\Process\ProcessBuilder $sshProcessBuilder
+     */
+    private $processBuilder;
+
     /**
      * @param string|array $properties IP address or hostname or user@hostname or associative array of properties
      *
      * Built-in properties are:
      *  [Mandatory]
-     *  host - The hostname or IP address
+     *  [ssh][host] - The hostname or IP address for the ssh connection
      *
      *  [Optional]
-     *  user - The user to use for the ssh connection
-     *  port - The ssh port to use when connecting
-     *  useControlMaster - Use control master connection?
-     *  controlPath - The socket file to use for connection sharing (see ControlPath in ssh_config(5))
-     *  controlPersist - The policy for leaving the connection open (see ControlPersist in ssh_config(5))
-     *  closeControlMasterOnDestruct - Should the control master connection be destroyed when this node is?
+     *  [ssh][user] - The user to use for the ssh connection
+     *
+     *  [ssh][options] - An associative array of ssh options, see -o option in ssh(1)
+     *
+     *  [ssh][control][useControlMaster] - Use control master connection?
+     *  [ssh][control][ControlPath] - see ControlPath in ssh_config(5)
+     *  [ssh][control][ControlPersist] - see ControlPersist in ssh_config(5)
+     *  [ssh][control][closeOnDestruct] - Should the control master connection be destroyed when this node is?
      *
      * @throws \InvalidArgumentException
      */
@@ -31,35 +37,55 @@ class Remote extends AbstractNode
             $userHost = explode('@', $properties);
             if (count($userHost) === 2) {
                 $properties = array(
-                    'user' => $userHost[0],
-                    'host' => $userHost[1],
+                    'ssh' => array(
+                        'user' => $userHost[0],
+                        'host' => $userHost[1],
+                    ),
                 );
             } else {
                 $properties = array(
-                    'host' => $properties,
+                    'ssh' => array(
+                        'host' => $properties,
+                    ),
                 );
             }
         }
 
-        if (!isset($properties['host']) || empty($properties['host'])) {
-            throw new InvalidArgumentException('host is mandatory');
+        if (!isset($properties['ssh']['host']) || empty($properties['ssh']['host'])) {
+            throw new InvalidArgumentException('property: [ssh][host] is mandatory');
         }
 
-        // Set some nice default options
-        $properties = array_merge(array(
-            'useControlMaster' => true,
-        ), $properties);
+        if (!isset($properties['ssh']['options'])) {
+            $properties['ssh']['options'] = array();
+        }
 
-        // If using ControlMaster set up default options
-        if ($properties['useControlMaster']) {
-            $properties = array_merge(array(
-                'controlPath' => sprintf(
-                    '~/.ssh/tempo_ctlmstr_%s',
-                    md5(print_r($properties, true))
-                ),
-                'controlPersist' => '2m',
-                'closeControlMasterOnDestruct' => true,
-            ), $properties);
+        if (!isset($properties['ssh']['control'])) {
+            $properties['ssh']['control'] = array();
+        }
+
+        foreach (array(
+            'ControlPath',
+            'ControlPersist',
+        ) as $controlOption) {
+            if (isset($properties['ssh']['options'][$controlOption])) {
+                throw new InvalidArgumentException(sprintf(
+                    'The ssh option %s can only be specified in the ssh control section',
+                    $controlOption
+                ));
+            }
+        }
+
+        // Default control options
+        $properties['ssh']['control'] = array_merge(array(
+            'useControlMaster' => true,
+        ), $properties['ssh']['control']);
+
+        if ($properties['ssh']['control']['useControlMaster']) {
+            $properties['ssh']['control'] = array_merge(array(
+                'ControlPath' => '~/.ssh/tempo_' . $properties['ssh']['host'],
+                'ControlPersist' => '10m', // We could set to yes but if they Ctl+C the command the socket may be left
+                'closeOnDestruct' => true,
+            ), $properties['ssh']['control']);
         }
 
         parent::__construct($properties);
@@ -71,25 +97,22 @@ class Remote extends AbstractNode
      */
     public function __destruct()
     {
-        if ($this['useControlMaster']
-            && $this['closeControlMasterOnDestruct']
+        if ($this['ssh']['control']['useControlMaster']
+            && $this['ssh']['control']['closeOnDestruct']
             && $this->isControlMasterEstablished()
         ) {
-            $closeCommand = sprintf(
-                'ssh -S %s -O exit %s',
-                escapeshellarg($this['controlPath']),
-                $this
-            );
-            $returnVal = null;
+            $processBuilder = $this->getProcessBuilder();
+            $processBuilder->setArguments(array(
+                '-O', // Control an active connection multiplexing master process
+                'exit',
+                (string)$this
+            ));
+            $process = $processBuilder->getProcess();
 
-            passthru($closeCommand, $returnVal);
-
-            if ($returnVal !== 0) {
-                throw new RuntimeException(sprintf(
-                    'could not close control connection using command: %s',
-                    $closeCommand
-                ));
-            }
+            $process
+                ->disableOutput()
+                ->mustRun()
+            ;
         }
     }
 
@@ -98,104 +121,120 @@ class Remote extends AbstractNode
      */
     public function __toString()
     {
-        if (isset($this['user'])) {
-            return sprintf(
-                '%s@%s',
-                $this['user'],
-                $this['host']
-            );
+        $string = $this['ssh']['host'];
+
+        if (isset($this['ssh']['user'])) {
+            $string = $this['ssh']['user'].'@'.$string;
         }
 
-        return $this['host'];
+        return $string;
     }
 
-    private function isControlMasterEstablished()
+    /**
+     * @param \Symfony\Component\Process\ProcessBuilder $processBuilder
+     * @return self
+     */
+    public function setProcessBuilder(ProcessBuilder $processBuilder)
     {
-        // Check if control master socket already exists
-        $returnVal = null;
-        $checkCommand = sprintf(
-            '[ -S %s ]',
-            $this['controlPath']
-        );
+        $this->processBuilder = $processBuilder;
 
-        system($checkCommand, $returnVal);
+        return $this;
+    }
 
-        return ($returnVal === 0);
+    /**
+     * @return \Symfony\Component\Process\ProcessBuilder
+     */
+    public function getProcessBuilder()
+    {
+        if ($this->processBuilder === null) {
+            $this->processBuilder = new ProcessBuilder();
+
+            $processPrefix = array(
+                'ssh',
+            );
+            if ($this['ssh']['control']['useControlMaster']) {
+                $processPrefix[] = '-o';
+                $processPrefix[] = 'ControlPath='.$this['ssh']['control']['ControlPath'];
+            }
+            $this->processBuilder->setPrefix($processPrefix);
+        }
+
+        return $this->processBuilder;
+    }
+
+    protected function isControlMasterEstablished()
+    {
+        $processBuilder = $this->getProcessBuilder();
+        $processBuilder->setArguments(array(
+            '-O', // Control an active connection multiplexing master process
+            'check',
+            (string)$this
+        ));
+        $process = $processBuilder->getProcess();
+
+        $process
+            ->disableOutput()
+            ->run()
+        ;
+
+        $ret = $process->getExitCode();
+
+        return ($ret === 0);
     }
 
     /**
      * @throws \RuntimeException
      */
-    private function establishControlMaster()
+    protected function establishControlMaster()
     {
+        $processBuilder = $this->getProcessBuilder();
         $args = array(
-            '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin).
-            '-T', // Disable pseudo-tty allocation.
-            '-M', // Places the ssh client into "master" mode for connection sharing.
-            sprintf(
-                '-S %s', // Specifies the location of a control socket for connection sharing
-                escapeshellarg($this['controlPath'])
-            ),
-            sprintf(
-                '-o %s', // ControlPersist - How to persist the master socket
-                escapeshellarg('ControlPersist='.$this['controlPersist'])
-            )
+            '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin)
+
+            '-o', // Disable pseudo-tty allocation
+            'RequestTTY=no',
+
+            '-o',
+            'ControlMaster=yes',
+
+            '-o', // ControlPersist - How to persist the master socket
+            'ControlPersist='.$this['ssh']['control']['ControlPersist'],
         );
-        if (isset($this['port'])) {
-            $args[] = sprintf(
-                '-p %d', // The ssh port
-                $this['port']
-            );
+        foreach ($this['ssh']['options'] as $option => $value) {
+            $args[] = '-o';
+            $args[] = $option.'='.$value;
         }
+        $args[] = (string)$this;
+        $processBuilder->setArguments($args);
+        $process = $processBuilder->getProcess();
 
-        $controlCommand = sprintf(
-            'ssh %s %s',
-            implode(' ', $args),
-            $this
-        );
-        $returnVal = null;
-
-        passthru($controlCommand, $returnVal);
-
-        if ($returnVal !== 0) {
-            throw new RuntimeException(sprintf(
-                'could not establish control connection using command: %s',
-                $controlCommand
-            ));
-        }
+        $process
+            ->disableOutput()
+            ->mustRun()
+        ;
     }
 
     /**
-     * Runs a command as specified by a given string on the node
-     *
      * {@inheritdoc}
      */
     public function run($command)
     {
-        if ($this['useControlMaster'] && !$this->isControlMasterEstablished()) {
+        if ($this['ssh']['control']['useControlMaster'] && !$this->isControlMasterEstablished()) {
             $this->establishControlMaster();
         }
 
-        $args = array();
-        if ($this['useControlMaster']) {
-            $args[] = sprintf(
-                '-S %s',
-                escapeshellarg($this['controlPath'])
-            );
+        $processBuilder = $this->getProcessBuilder();
+        foreach ($this['ssh']['options'] as $option => $value) {
+            $args[] = '-o';
+            $args[] = $option.'='.$value;
         }
-        if (isset($this['port'])) {
-            $args[] = sprintf(
-                '-p %d', // The ssh port
-                $this['port']
-            );
-        }
+        $args[] = (string)$this;
+        $processBuilder->setArguments($args);
+        $processBuilder
+            ->setInput($command)
+        ;
+        $process = $processBuilder->getProcess();
 
-        $process = new Process(sprintf(
-            'ssh %s %s %s',
-            implode(' ', $args),
-            $this,
-            escapeshellarg($command)
-        ));
         $process->setTimeout(null);
         $process->mustRun();
 

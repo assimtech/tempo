@@ -32,8 +32,10 @@ entry point.
 
 To achieve this, the best place to start is to have a read of `bin/tempo`.  The only part you need is:
 
+```php
     $tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
     $application->addCommands($tempo->getCommands());
+```
 
 The loader simply loads the tempo definition from your project's `tempo.php`.
 You can then get the `Symfony\Component\Console\Command\Command`'s from `$tempo`

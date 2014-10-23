@@ -52,6 +52,6 @@ to work without asking you for your password.
 To make successive remote commands run over a single ssh connection, tempo makes use of a
 [ControlMaster](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5) connection. This means a
 single connection is established and successive commands go over this connection. This is done by storing a socket file
-in `~/.ssh/tempo_ctlmstr_*`. Tempo keeps this socket open for a period of time and closes it once the node is destroyed.
+in `~/.ssh/tempo_*`. Tempo keeps this socket open for a period of time and closes it once the node is destroyed.
 
 For advanced remote node configuration options, please see [Nodes](04-Nodes.md).

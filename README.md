@@ -14,43 +14,40 @@ If you place it in `~/bin/tempo` and make it executable you will be able to run 
 
 Create a `tempo.php` file in the root of your project containing the following:
 
-    <?php
-
+```php
     use Assimtech\Tempo;
     use Symfony\Component\Console\Command\Command;
+    use Symfony\Component\Console\Input\InputInterface;
+    use Symfony\Component\Console\Output\OutputInterface;
 
     $tempo = new Tempo\Definition();
 
     // Environments
-    $testEnv = new Tempo\Environment('test');
-    $tempo->addEnvironment($testEnv);
+    $env1 = new Tempo\Environment('test');
+    $tempo->addEnvironment($env1);
 
     // Nodes
     $server1 = new Tempo\Node\Remote('server1.example.com');
-    $testEnv->addNode($server1);
+    $env1->addNode($server1);
 
     // Commands
     foreach ($tempo->getEnvironments() as $env) {
-        $whoami = new Command($env.':whoami');
-        $whoami->setCode(function ($input, $output) use ($env) {
-            $node = $env->getNode();
-
-            $iam = $node->run('whoami');
-            $output->write($iam);
-        });
-        $tempo->addCommand($whoami);
-
         $whereami = new Command($env.':whereami');
-        $whereami->setCode(function ($input, $output) use ($env) {
+        $whereami->setCode(function (InputInterface $input, OutputInterface $output) use ($env) {
             $node = $env->getNode();
 
-            $iam = $node->run('hostname');
-            $output->write($iam);
+            $output->write('I\'m on: ');
+            $hostname = $node->run('hostname --fqdn');
+            $output->writeln($hostname);
+
+            $ips = $node->run('/sbin/ifconfig');
+            $output->write($ips);
         });
         $tempo->addCommand($whereami);
     }
 
     return $tempo;
+```
 
 
 Change "server1.example.com" to a server you have ssh access to.
@@ -59,7 +56,6 @@ If you need to change username / port etc, please see the documentation on how t
 
 Run tempo from within the root of your project:
 
-    tempo test:whoami
     tempo test:whereami
 
 
