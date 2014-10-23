@@ -15,7 +15,6 @@ Some of the [Tasks](docs/06-Tasks.md) you may want to do will already be built a
 
 ## Topics
 
-* [Overview](01-Overview.md)
 * [Installation](02-Installation.md)
 * [Environments](03-Environments.md)
 * [Nodes](04-Nodes.md)

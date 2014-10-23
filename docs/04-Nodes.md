@@ -11,11 +11,11 @@ A tempo node extends [ArrayObject](http://php.net/manual/en/class.arrayobject.ph
 on it and access them later.
 
 ```php
-    $server1['webpath'] = '/var/www/website.example.com';
-    $server2['webpath'] = '/opt/website.example.com';
+$server1['webpath'] = '/var/www/website.example.com';
+$server2['webpath'] = '/opt/website.example.com';
 
-    // ... Later in a task or command definition ...
-    doSomethingTo($node['webpath']);
+// ... Later in a task or command definition ...
+doSomethingTo($node['webpath']);
 ```
 
 
@@ -24,8 +24,8 @@ on it and access them later.
 A local node is used for running commands locally. A local node will always have the name 'localhost'.
 
 ```php
-    $node = new Assimtech\Tempo\Node\Local();
-    echo $node->run('hostname'); // This will print the hostname of the server you are running tempo on
+$node = new Assimtech\Tempo\Node\Local();
+echo $node->run('hostname'); // This will print the hostname of the server you are running tempo on
 ```
 
 
@@ -34,8 +34,8 @@ A local node is used for running commands locally. A local node will always have
 A remote node is used for running commands remotely over an ssh connection.
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote('server1.example.com');
-    echo $node->run('hostname'); // This will print the hostname of server1.example.com
+$node = new Assimtech\Tempo\Node\Remote('server1.example.com');
+echo $node->run('hostname'); // This will print the hostname of server1.example.com
 ```
 
 
@@ -44,15 +44,15 @@ A remote node is used for running commands remotely over an ssh connection.
 Options can be set on a Remote node through the constructor and will be accessible as array keys.
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote(array(
-        'ssh' => array(
-            'user' => 'me',
-            'host' => 'server1.example.com',
-            'options' => array( // Any option available to ssh_config(5) can be specified here
-                'Port' => 1234,
-            ),
+$node = new Assimtech\Tempo\Node\Remote(array(
+    'ssh' => array(
+        'user' => 'me',
+        'host' => 'server1.example.com',
+        'options' => array( // Any option available to ssh_config(5) can be specified here
+            'Port' => 1234,
         ),
-    ));
+    ),
+));
 ```
 
 
@@ -64,17 +64,17 @@ This is the hostname or IP used when establishing the ssh connection to the node
 shortcut form:
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote('server1.example.com');
+$node = new Assimtech\Tempo\Node\Remote('server1.example.com');
 ```
 
 Or in the full form:
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote(array(
-        'ssh' => array(
-            'host' => 'server1.example.com',
-        ),
-    ));
+$node = new Assimtech\Tempo\Node\Remote(array(
+    'ssh' => array(
+        'host' => 'server1.example.com',
+    ),
+));
 ```
 
 
@@ -86,18 +86,18 @@ This is the username used when establishing the ssh connection to the node. This
 form:
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote('username@server1.example.com');
+$node = new Assimtech\Tempo\Node\Remote('username@server1.example.com');
 ```
 
 Or in the full form:
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote(array(
-        'ssh' => array(
-            'user' => 'username',
-            'host' => 'server1.example.com',
-        ),
-    ));
+$node = new Assimtech\Tempo\Node\Remote(array(
+    'ssh' => array(
+        'user' => 'username',
+        'host' => 'server1.example.com',
+    ),
+));
 ```
 
 
@@ -111,14 +111,14 @@ See also [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/
 This is the port used when establishing the ssh connection to the node.
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote(array(
-        'ssh' => array(
-            'host' => 'server1.example.com',
-            'options' => array(
-                'Port' => 1234,
-            ),
+$node = new Assimtech\Tempo\Node\Remote(array(
+    'ssh' => array(
+        'host' => 'server1.example.com',
+        'options' => array(
+            'Port' => 1234,
         ),
-    ));
+    ),
+));
 ```
 
 
@@ -138,15 +138,16 @@ The following ssh control options are available:
 | ssh control closeOnDestruct  | Should the control master connection be destroyed when this node is?                |
 
 ```php
-    $node = new Assimtech\Tempo\Node\Remote(array(
-        'ssh' => array(
-            'host' => 'server1.example.com',
-            'control' => array(
-                'closeOnDestruct' => false,
-            ),
+$node = new Assimtech\Tempo\Node\Remote(array(
+    'ssh' => array(
+        'host' => 'server1.example.com',
+        'control' => array(
+            'closeOnDestruct' => false,
         ),
-    ));
+    ),
+));
 ```
+
 
 ##### ssh control useControlMaster
 

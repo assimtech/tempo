@@ -1,5 +1,6 @@
 # Contributing
 
+
 ## Creating a release
 
 Tempo releases should be versioned with a tag and then compiled into a phar. The steps for creating a new release are:

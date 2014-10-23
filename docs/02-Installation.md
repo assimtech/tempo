@@ -13,11 +13,13 @@ You could also add it to a systemwide `bin` directory such as `/usr/local/bin/te
 
 If your project is already using composer, add a dependency to your project's `composer.json`.
 
-    {
-        "require": {
-            "assimtech/tempo": "0.*"
-        }
+```json
+{
+    "require": {
+        "assimtech/tempo": "0.*"
     }
+}
+```
 
 This will make tempo share your autoloader so you can reference any [Environments](03-Environments.md),
 [Nodes](04-Nodes.md), [Commands](05-Commands.md) or [Tasks](06-Tasks.md) from either tempo's core or your project's
@@ -33,8 +35,8 @@ entry point.
 To achieve this, the best place to start is to have a read of `bin/tempo`.  The only part you need is:
 
 ```php
-    $tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
-    $application->addCommands($tempo->getCommands());
+$tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
+$application->addCommands($tempo->getCommands());
 ```
 
 The loader simply loads the tempo definition from your project's `tempo.php`.
@@ -46,9 +48,11 @@ and add them to your existing `Symfony\Component\Console\Application $applicatio
 
 This is how you will want to use tempo if you are contributing to it or want to use git to manage your tempo version.
 
-    git clone git@github.com:assimtech/tempo.git
-    cd tempo
-    composer install
+```shell
+git clone git@github.com:assimtech/tempo.git
+cd tempo
+composer install
+```
 
 Then we would recommend creating a symbolic link to `bin/tempo` from your `~/bin` directory or a systemwide `bin`.
 

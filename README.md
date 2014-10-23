@@ -15,40 +15,39 @@ If you place it in `~/bin/tempo` and make it executable you will be able to run 
 Create a `tempo.php` file in the root of your project containing the following:
 
 ```php
-    use Assimtech\Tempo;
-    use Symfony\Component\Console\Command\Command;
-    use Symfony\Component\Console\Input\InputInterface;
-    use Symfony\Component\Console\Output\OutputInterface;
+use Assimtech\Tempo;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-    $tempo = new Tempo\Definition();
+$tempo = new Tempo\Definition();
 
-    // Environments
-    $env1 = new Tempo\Environment('test');
-    $tempo->addEnvironment($env1);
+// Environments
+$env1 = new Tempo\Environment('test');
+$tempo->addEnvironment($env1);
 
-    // Nodes
-    $server1 = new Tempo\Node\Remote('server1.example.com');
-    $env1->addNode($server1);
+// Nodes
+$server1 = new Tempo\Node\Remote('server1.example.com');
+$env1->addNode($server1);
 
-    // Commands
-    foreach ($tempo->getEnvironments() as $env) {
-        $whereami = new Command($env.':whereami');
-        $whereami->setCode(function (InputInterface $input, OutputInterface $output) use ($env) {
-            $node = $env->getNode();
+// Commands
+foreach ($tempo->getEnvironments() as $env) {
+    $whereami = new Command($env.':whereami');
+    $whereami->setCode(function (InputInterface $input, OutputInterface $output) use ($env) {
+        $node = $env->getNode();
 
-            $output->write('I\'m on: ');
-            $hostname = $node->run('hostname --fqdn');
-            $output->writeln($hostname);
+        $output->write('I\'m on: ');
+        $hostname = $node->run('hostname --fqdn');
+        $output->writeln($hostname);
 
-            $ips = $node->run('/sbin/ifconfig');
-            $output->write($ips);
-        });
-        $tempo->addCommand($whereami);
-    }
+        $ips = $node->run('/sbin/ifconfig');
+        $output->write($ips);
+    });
+    $tempo->addCommand($whereami);
+}
 
-    return $tempo;
+return $tempo;
 ```
-
 
 Change "server1.example.com" to a server you have ssh access to.
 If you need to change username / port etc, please see the documentation on how to setup a [Node](docs/04-Nodes.md)
@@ -56,8 +55,9 @@ If you need to change username / port etc, please see the documentation on how t
 
 Run tempo from within the root of your project:
 
-    tempo test:whereami
-
+```shell
+tempo test:whereami
+```
 
 Try adding more environments / servers / commands
 
