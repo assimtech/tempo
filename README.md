@@ -8,7 +8,7 @@ Tempo is a scripting tool for running commands on local or remote nodes. It was 
 
 ## Quick start
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.0.04/tempo.phar).
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.1.00/tempo.phar).
 If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects.
 
 
