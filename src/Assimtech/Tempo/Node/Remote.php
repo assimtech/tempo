@@ -33,6 +33,7 @@ class Remote extends AbstractNode
      */
     public function __construct($properties)
     {
+        // Handle string shortcut setup
         if (is_string($properties)) {
             $userHost = explode('@', $properties);
             if (count($userHost) === 2) {
@@ -51,9 +52,19 @@ class Remote extends AbstractNode
             }
         }
 
-        if (!isset($properties['ssh']['host']) || empty($properties['ssh']['host'])) {
-            throw new InvalidArgumentException('property: [ssh][host] is mandatory');
-        }
+        $properties = self::setupDefaults($properties);
+
+        self::validateProperties($properties);
+
+        parent::__construct($properties);
+    }
+
+    /**
+     * @param array $properties
+     * @return array
+     */
+    protected static function setupDefaults(array $properties)
+    {
 
         if (!isset($properties['ssh']['options'])) {
             $properties['ssh']['options'] = array();
@@ -61,18 +72,6 @@ class Remote extends AbstractNode
 
         if (!isset($properties['ssh']['control'])) {
             $properties['ssh']['control'] = array();
-        }
-
-        foreach (array(
-            'ControlPath',
-            'ControlPersist',
-        ) as $controlOption) {
-            if (isset($properties['ssh']['options'][$controlOption])) {
-                throw new InvalidArgumentException(sprintf(
-                    'The ssh option %s can only be specified in the ssh control section',
-                    $controlOption
-                ));
-            }
         }
 
         // Default control options
@@ -88,7 +87,30 @@ class Remote extends AbstractNode
             ), $properties['ssh']['control']);
         }
 
-        parent::__construct($properties);
+        return $properties;
+    }
+
+    /**
+     * @param array $properties
+     * @throws \InvalidArgumentException
+     */
+    protected static function validateProperties(array $properties)
+    {
+        if (!isset($properties['ssh']['host']) || empty($properties['ssh']['host'])) {
+            throw new InvalidArgumentException('property: [ssh][host] is mandatory');
+        }
+
+        foreach (array(
+            'ControlPath',
+            'ControlPersist',
+        ) as $controlOption) {
+            if (isset($properties['ssh']['options'][$controlOption])) {
+                throw new InvalidArgumentException(sprintf(
+                    'The ssh option %s can only be specified in the [ssh][control] section',
+                    $controlOption
+                ));
+            }
+        }
     }
 
     /**

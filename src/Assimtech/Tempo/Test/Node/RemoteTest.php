@@ -7,7 +7,7 @@ use Assimtech\Tempo\Node\Remote;
 
 class RemoteTest extends PHPUnit_Framework_TestCase
 {
-    private function getMockCheckEstablishedProcess($exitCode)
+    private function getMockCheckControlMasterProcess($exitCode)
     {
         $mockProcess = $this->getMock('Symfony\Component\Process\Process', array(
             'disableOutput',
@@ -28,6 +28,69 @@ class RemoteTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getExitCode')
             ->will($this->returnValue($exitCode))
+        ;
+
+        return $mockProcess;
+    }
+
+    private function getMockEstablishControlMasterProcess()
+    {
+        $mockProcess = $this->getMock('Symfony\Component\Process\Process', array(
+            'disableOutput',
+            'mustRun',
+        ), array(null));
+        $mockProcess
+            ->expects($this->once())
+            ->method('disableOutput')
+            ->will($this->returnValue($mockProcess))
+        ;
+        $mockProcess
+            ->expects($this->once())
+            ->method('mustRun')
+        ;
+
+        return $mockProcess;
+    }
+
+    private function getMockExecuteProcess($testOutput)
+    {
+        $mockProcess = $this->getMock('Symfony\Component\Process\Process', array(
+            'setTimeout',
+            'mustRun',
+            'getOutput',
+        ), array(null));
+        $mockProcess
+            ->expects($this->once())
+            ->method('setTimeout')
+            ->with($this->equalTo(null))
+            ->will($this->returnValue($mockProcess))
+        ;
+        $mockProcess
+            ->expects($this->once())
+            ->method('mustRun')
+        ;
+        $mockProcess
+            ->expects($this->once())
+            ->method('getOutput')
+            ->willReturn($testOutput)
+        ;
+        return $mockProcess;
+    }
+
+    private function getMockExitControlMasterProcess()
+    {
+        $mockProcess = $this->getMock('Symfony\Component\Process\Process', array(
+            'disableOutput',
+            'mustRun',
+        ), array(null));
+        $mockProcess
+            ->expects($this->once())
+            ->method('disableOutput')
+            ->will($this->returnValue($mockProcess))
+        ;
+        $mockProcess
+            ->expects($this->once())
+            ->method('mustRun')
         ;
 
         return $mockProcess;
@@ -77,7 +140,7 @@ class RemoteTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The ssh option ControlPersist can only be specified in the ssh control section
+     * @expectedExceptionMessage The ssh option ControlPersist can only be specified in the [ssh][control] section
      */
     public function testControlOption()
     {
@@ -103,21 +166,9 @@ class RemoteTest extends PHPUnit_Framework_TestCase
     {
         $host = 'localhost';
 
-        $mockProcess1 = $this->getMockCheckEstablishedProcess(0);
+        $mockProcess1 = $this->getMockCheckControlMasterProcess(0);
 
-        $mockProcess2 = $this->getMock('Symfony\Component\Process\Process', array(
-            'disableOutput',
-            'mustRun',
-        ), array(null));
-        $mockProcess2
-            ->expects($this->once())
-            ->method('disableOutput')
-            ->will($this->returnValue($mockProcess2))
-        ;
-        $mockProcess2
-            ->expects($this->once())
-            ->method('mustRun')
-        ;
+        $mockProcess2 = $this->getMockExitControlMasterProcess();
 
         $mockProcessBuilder = $this->getMock('Symfony\Component\Process\ProcessBuilder', array(
             'setArguments',
@@ -127,15 +178,15 @@ class RemoteTest extends PHPUnit_Framework_TestCase
             ->expects($this->exactly(2))
             ->method('setArguments')
             ->withConsecutive(
-                array(array(
-                    '-O',
-                    'check',
-                    $host,
+                // Check Control Master
+                array(explode(
+                    ' ',
+                    '-O check '.$host
                 )),
-                array(array(
-                    '-O',
-                    'exit',
-                    $host,
+                // Close Control Master
+                array(explode(
+                    ' ',
+                    '-O exit '.$host
                 ))
             )
         ;
@@ -165,44 +216,10 @@ class RemoteTest extends PHPUnit_Framework_TestCase
         $cmd = 'my test';
         $testOutput = 'hello tester';
 
-        $mockProcess1 = $this->getMockCheckEstablishedProcess(1);
-
-        $mockProcess2 = $this->getMock('Symfony\Component\Process\Process', array(
-            'disableOutput',
-            'mustRun',
-        ), array(null));
-        $mockProcess2
-            ->expects($this->once())
-            ->method('disableOutput')
-            ->will($this->returnValue($mockProcess2))
-        ;
-        $mockProcess2
-            ->expects($this->once())
-            ->method('mustRun')
-        ;
-
-        $mockProcess3 = $this->getMock('Symfony\Component\Process\Process', array(
-            'setTimeout',
-            'mustRun',
-            'getOutput',
-        ), array(null));
-        $mockProcess3
-            ->expects($this->once())
-            ->method('setTimeout')
-            ->with($this->equalTo(null))
-            ->will($this->returnValue($mockProcess2))
-        ;
-        $mockProcess3
-            ->expects($this->once())
-            ->method('mustRun')
-        ;
-        $mockProcess3
-            ->expects($this->once())
-            ->method('getOutput')
-            ->willReturn($testOutput)
-        ;
-
-        $mockProcess4 = $this->getMockCheckEstablishedProcess(1);
+        $mockProcess1 = $this->getMockCheckControlMasterProcess(1);
+        $mockProcess2 = $this->getMockEstablishControlMasterProcess();
+        $mockProcess3 = $this->getMockExecuteProcess($testOutput);
+        $mockProcess4 = $this->getMockCheckControlMasterProcess(1);
 
         $mockProcessBuilder = $this->getMock('Symfony\Component\Process\ProcessBuilder', array(
             'setArguments',
@@ -212,32 +229,25 @@ class RemoteTest extends PHPUnit_Framework_TestCase
             ->expects($this->exactly(4))
             ->method('setArguments')
             ->withConsecutive(
-                array(array(
-                    '-O',
-                    'check',
-                    $host,
+                // Check Control Master
+                array(explode(
+                    ' ',
+                    '-O check '.$host
                 )),
-                array(array(
-                    '-n',
-                    '-o',
-                    'RequestTTY=no',
-                    '-o',
-                    'ControlMaster=yes',
-                    '-o',
-                    'ControlPersist=10m',
-                    '-o',
-                    'Port=1234',
-                    $host,
+                // Establish Control Master
+                array(explode(
+                    ' ',
+                    '-n -o RequestTTY=no -o ControlMaster=yes -o ControlPersist=10m -o Port=1234 '.$host
                 )),
-                array(array(
-                    '-o',
-                    'Port=1234',
-                    $host,
+                // Execute
+                array(explode(
+                    ' ',
+                    '-o Port=1234 '.$host
                 )),
-                array(array(
-                    '-O',
-                    'check',
-                    $host,
+                // Check Control Master
+                array(explode(
+                    ' ',
+                    '-O check '.$host
                 ))
             )
         ;
