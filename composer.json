@@ -10,7 +10,6 @@
         "symfony/process": "~2"
     },
     "require-dev": {
-        "symfony/finder": "~2",
         "pdepend/pdepend": "~2",
         "phpmd/phpmd": "~2",
         "phpunit/phpunit": "~4",

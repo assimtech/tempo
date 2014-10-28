@@ -80,9 +80,9 @@ It's likely you will want to be able to roll a command back if it fails half way
 `try () {} catch {}` blocks around sections of you command that could fail. It's normal to have more than one set of
 `try () {} catch {}` blocks is a single command if you have multiple checkpoints to rollback from.
 
-Say your command copies something to a new release directory then moves the current live symlink to it and does a cache
-warm. There are two distinct rollback checkpoints; one beginning after the copy has started and one after symlink has
-been switched. To roll this back you could:
+Say your command copies something to a new release directory then moves the current live symlink to it. There is a
+distinct rollback checkpoint beginning before the copy has started ending after the symlink has been switched.
+To roll this back you could:
 
 ```php
 try {
@@ -92,15 +92,7 @@ try {
     // Abort
 }
 
-try {
-    // Move the current live symlink to the new release directory
-} catch (Exception $e) {
-    // Move the current live symlink back to the old release directory
-    // Delete the new release directory
-    // Hope nobody saw the broken site while that symlink was pointed at the new release... email customer service
-    // just incase
-    // Abort
-}
+// Move the current live symlink to the new release directory
 ```
 
 
@@ -115,7 +107,7 @@ use Assimtech\Tempo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Exception;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Deploy extends Command
 {
@@ -162,39 +154,24 @@ class Deploy extends Command
                 'rsync -ltrz ./ %s',
                 escapeshellarg($remote.':'.$releasePath)
             ));
-        } catch (Exception $e) {
+        } catch (ProcessFailedException $e) {
             $output->writeln('Copy failed, rolling back, no harm done');
+
             $remote->run(sprintf(
                 'rm -r %s',
                 escapeshellarg($releasePath)
             ));
+
             throw $e;
         }
 
-        try {
-            // Put it live
-            $remote->run(sprintf(
-                'rm -f %1$s && ln -s %2$s %1$s',
-                escapeshellarg($currentPath),
-                escapeshellarg($releasePath)
-            ));
-            $output->writeln(sprintf('We are live on %s', $remote));
-
-            // Warm the cache
-            $remote->run(sprintf(
-                '%s/app/console --env=%s cache:warm',
-                escapeshellarg($releasePath),
-                escapeshellarg($this->env)
-            ));
-        } catch (Exception $e) {
-            $output->writeln('Cache warm failed, rolling back');
-            $remote->run(sprintf(
-                'rm -f %1$s && ln -s %2$s %1$s',
-                escapeshellarg($currentPath),
-                escapeshellarg($releasesPath.'/'.$currentRelease)
-            ));
-            throw $e;
-        }
+        // Put it live
+        $remote->run(sprintf(
+            'rm -f %1$s && ln -s %2$s %1$s',
+            escapeshellarg($currentPath),
+            escapeshellarg($releasePath)
+        ));
+        $output->writeln(sprintf('We are live on %s', $remote));
     }
 }
 ```
