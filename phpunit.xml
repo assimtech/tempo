@@ -5,7 +5,7 @@
 >
     <testsuites>
         <testsuite name="Tempo Test Suite">
-            <directory suffix="Test.php">src/Assimtech/Tempo</directory>
+            <directory suffix="Test.php">src</directory>
         </testsuite>
     </testsuites>
 
@@ -13,8 +13,8 @@
         <whitelist>
             <directory suffix=".php">src</directory>
             <exclude>
-                <directory suffix=".php">src/Assimtech/Tempo/Test</directory>
-                <directory>src/Assimtech/Tempo/Phar</directory>
+                <directory suffix=".php">src/Test</directory>
+                <directory>src/Phar</directory>
             </exclude>
         </whitelist>
     </filter>

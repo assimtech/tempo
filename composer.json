@@ -17,8 +17,8 @@
         "squizlabs/php_codesniffer": "~1"
     },
     "autoload": {
-        "psr-0": {
-            "Assimtech\\Tempo": "src"
+        "psr-4": {
+            "Assimtech\\Tempo\\": "src"
         }
     },
     "bin": [

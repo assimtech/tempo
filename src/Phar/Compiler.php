@@ -28,7 +28,7 @@ final class Compiler
     public function __construct()
     {
         $this->pharFile = 'tempo.phar';
-        $this->baseDir = realpath(__DIR__.'/../../../../');
+        $this->baseDir = realpath(__DIR__.'/../../');
         $this->local = new Local();
     }
 
