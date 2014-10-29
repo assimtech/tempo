@@ -58,7 +58,7 @@ class Deploy extends Command
         // Copy
         $output->writeln(sprintf('Copying to %s', $remote));
         $local->run(sprintf(
-            'rsync -ltrz ./ %s',
+            'rsync -trz ./ %s',
             escapeshellarg($remote.':'.$releasePath)
         ));
 
@@ -138,20 +138,11 @@ class Deploy extends Command
         $local = new Tempo\Node\Local();
         $remote = $this->env->getNode();
 
-        // Get the current release
-        $dirs = $remote->run(sprintf(
-            'ls %s',
-            escapeshellarg($releasesPath)
-        ));
-        $releases = explode("\n", $dirs);
-        array_pop($releases); // The last one is a blank line
-        $currentRelease = array_pop($releases);
-
         // Copy
         try {
             $output->writeln(sprintf('Copying to %s', $remote));
             $local->run(sprintf(
-                'rsync -ltrz ./ %s',
+                'rsync -trz ./ %s',
                 escapeshellarg($remote.':'.$releasePath)
             ));
         } catch (ProcessFailedException $e) {

@@ -96,6 +96,17 @@ class RemoteTest extends PHPUnit_Framework_TestCase
         return $mockProcess;
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage properties must be either an array or string
+     */
+    public function testConstructInvalidConfig()
+    {
+        $config = 1;
+
+        new Remote($config);
+    }
+
     public function testHost()
     {
         $host = 'localhost';
@@ -237,12 +248,12 @@ class RemoteTest extends PHPUnit_Framework_TestCase
                 // Establish Control Master
                 array(explode(
                     ' ',
-                    '-n -o RequestTTY=no -o ControlMaster=yes -o ControlPersist=10m -o Port=1234 '.$host
+                    '-n -o ControlMaster=yes -o ControlPersist=10m -o RequestTTY=no -o Port=1234 '.$host
                 )),
                 // Execute
                 array(explode(
                     ' ',
-                    '-o Port=1234 '.$host
+                    '-o RequestTTY=no -o Port=1234 '.$host
                 )),
                 // Check Control Master
                 array(explode(

@@ -1,0 +1,15 @@
+nodes:
+    server1:
+        ssh:
+            host: server1.example.com
+
+environments:
+    -
+        name: test
+        nodes:
+            - server1
+        roles:
+            web:
+                - server1
+            db:
+                - server1

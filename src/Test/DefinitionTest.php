@@ -9,6 +9,98 @@ use Symfony\Component\Console\Command\Command;
 
 class DefinitionTest extends PHPUnit_Framework_TestCase
 {
+    public function configProvider()
+    {
+        return array(
+            array(__DIR__.'/tempo.yml'),
+            array(array(
+                'nodes' => array(
+                    'server1' => array(
+                        'ssh' => array(
+                            'host' => 'server1.example.com',
+                        ),
+                    ),
+                ),
+                'environments' => array(
+                    array(
+                        'name' => 'test',
+                        'nodes' => array(
+                            'server1',
+                        ),
+                        'roles' => array(
+                            'web' => array(
+                                'server1',
+                            ),
+                            'db' => array(
+                                'server1',
+                            ),
+                        ),
+                    ),
+                ),
+            )),
+        );
+    }
+
+    /**
+     * @dataProvider configProvider
+     */
+    public function testConstructFromConfig($config)
+    {
+        $tempo = new Definition($config);
+
+        $this->assertCount(1, $tempo->getEnvironments());
+
+        $testEnv = $tempo->getEnvironment('test');
+
+        $this->assertEquals('test', (string)$testEnv);
+        $this->assertCount(1, $testEnv->getNodes());
+
+        $node = $testEnv->getNode();
+
+        $this->assertEquals('server1.example.com', (string)$node);
+
+        $webNodes = $testEnv->getNodes('web');
+
+        $this->assertEquals(array($node), $webNodes);
+
+        $dbNodes = $testEnv->getNodes('db');
+
+        $this->assertEquals(array($node), $dbNodes);
+    }
+
+    public function testConstructFromConfigWithoutNodes()
+    {
+        $config = array(
+            'environments' => array(
+                array(
+                    'name' => 'test',
+                ),
+            ),
+        );
+
+        $tempo = new Definition($config);
+
+        $this->assertCount(1, $tempo->getEnvironments());
+
+        $testEnv = $tempo->getEnvironment('test');
+
+        $this->assertEquals('test', (string)$testEnv);
+
+        $this->assertEmpty($testEnv->getNodes());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage config: [environments] is mandatory
+     */
+    public function testConstructFromConfigWithoutEnvironments()
+    {
+        $config = array(
+        );
+
+        new Definition($config);
+    }
+
     public function testAddEnvironment()
     {
         $tempo = new Definition();

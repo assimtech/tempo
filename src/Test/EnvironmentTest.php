@@ -12,6 +12,80 @@ use Assimtech\Tempo\Node\Remote;
  */
 class EnvironmentTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage properties must be either an array or string
+     */
+    public function testInvalidConstruct()
+    {
+        $config = 1;
+
+        new Environment($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage property: [name] is mandatory
+     */
+    public function testMissingName()
+    {
+        $config = array(
+        );
+
+        new Environment($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage property: [nodes][] must be instances of Assimtech\Tempo\Node\AbstractNode
+     */
+    public function testInvalidNode()
+    {
+        $config = array(
+            'name' => 'test',
+            'nodes' => array(
+                1,
+            ),
+        );
+
+        new Environment($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage property: [nodes][] contains duplicate node: server1
+     */
+    public function testDuplicateNode()
+    {
+        $config = array(
+            'name' => 'test',
+            'nodes' => array(
+                new Remote('server1'),
+                new Remote('server1'),
+            ),
+        );
+
+        new Environment($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage property: [roles][web][server1] is not a member of [nodes][]
+     */
+    public function testRoleMissingNode()
+    {
+        $config = array(
+            'name' => 'test',
+            'roles' => array(
+                'web' => array(
+                    new Remote('server1')
+                ),
+            ),
+        );
+
+        new Environment($config);
+    }
+
     public function testName()
     {
         $environmentName = 'test';

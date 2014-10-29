@@ -8,23 +8,74 @@ use OutOfBoundsException;
 
 class Environment extends ArrayObject
 {
-    /** @var string $name */
-    private $name;
+    /**
+     * @var array|string $properties Environment name, typically one of: development, staging, testing, demo, production
+     */
+    public function __construct($properties)
+    {
+        // Handle string shortcut setup
+        if (is_string($properties)) {
+            $properties = array(
+                'name' => $properties,
+            );
+        }
 
-    /** @var \Assimtech\Tempo\Node\AbstractNode[] $nodes */
-    private $nodes;
+        if (!is_array($properties)) {
+            throw new InvalidArgumentException('properties must be either an array or string');
+        }
 
-    /** @var \Assimtech\Tempo\Node\AbstractNode[][] $roles */
-    private $roles;
+        if (!isset($properties['nodes'])) {
+            $properties['nodes'] = array();
+        }
+
+        if (!isset($properties['roles'])) {
+            $properties['roles'] = array();
+        }
+
+        self::validateProperties($properties);
+
+        parent::__construct($properties);
+    }
 
     /**
-     * @var string $name Environment name, typically one of: development, staging, testing, demo, production
+     * @param array $properties
+     * @throws \InvalidArgumentException
      */
-    public function __construct($name)
+    protected static function validateProperties(array $properties)
     {
-        $this->name = $name;
-        $this->nodes = array();
-        $this->roles = array();
+        if (!isset($properties['name']) || empty($properties['name'])) {
+            throw new InvalidArgumentException('property: [name] is mandatory');
+        }
+
+        $foundNodes = array();
+        foreach ($properties['nodes'] as $node) {
+            if (!$node instanceof Node\AbstractNode) {
+                throw new InvalidArgumentException(
+                    'property: [nodes][] must be instances of Assimtech\Tempo\Node\AbstractNode'
+                );
+            }
+
+            if (in_array((string)$node, $foundNodes)) {
+                throw new InvalidArgumentException(sprintf(
+                    'property: [nodes][] contains duplicate node: %s',
+                    (string)$node
+                ));
+            }
+
+            $foundNodes[] = (string)$node;
+        }
+
+        foreach ($properties['roles'] as $role => $nodes) {
+            foreach ($nodes as $node) {
+                if (!in_array($node, $properties['nodes'])) {
+                    throw new InvalidArgumentException(sprintf(
+                        'property: [roles][%s][%s] is not a member of [nodes][]',
+                        $role,
+                        $node
+                    ));
+                }
+            }
+        }
     }
 
     /**
@@ -32,7 +83,7 @@ class Environment extends ArrayObject
      */
     public function __toString()
     {
-        return $this->name;
+        return $this['name'];
     }
 
     /**
@@ -44,24 +95,32 @@ class Environment extends ArrayObject
     public function addNode(Node\AbstractNode $node, $roles = array())
     {
         if (is_string($roles)) {
-            $roles = array($roles);
-        } elseif (is_array($roles)) {
-            foreach ($roles as $role) {
-                if (!is_string($role)) {
-                    throw new InvalidArgumentException(sprintf(
-                        'Environment: %s, roles must be a string or array of strings',
-                        $this
-                    ));
-                }
-            }
-        } else {
+            $roles = array(
+                $roles,
+            );
+        }
+
+        if (!is_array($roles)) {
             throw new InvalidArgumentException(sprintf(
                 'Environment: %s, roles must be a string or array of strings',
                 $this
             ));
         }
 
-        if (isset($this->nodes[(string)$node])) {
+        foreach ($roles as $role) {
+            if (!is_string($role)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Environment: %s, roles must be a string or array of strings',
+                    $this
+                ));
+            }
+        }
+
+        $knownNodeNames = array();
+        foreach ($this['nodes'] as $knownNode) {
+            $knownNodeNames[] = (string)$knownNode;
+        }
+        if (in_array((string)$node, $knownNodeNames)) {
             throw new InvalidArgumentException(sprintf(
                 'Environment: %s, Node: %s already exists',
                 $this,
@@ -69,12 +128,13 @@ class Environment extends ArrayObject
             ));
         }
 
-        $this->nodes[(string)$node] = $node;
+        $this['nodes'][] = $node;
+
         foreach ($roles as $role) {
-            if (!isset($this->roles[$role])) {
-                $this->roles[$role] = array();
+            if (!isset($this['roles'][$role])) {
+                $this['roles'][$role] = array();
             }
-            $this->roles[$role][] = $node;
+            $this['roles'][$role][] = $node;
         }
 
         return $this;
@@ -103,9 +163,9 @@ class Environment extends ArrayObject
     public function getNode($name = null)
     {
         if ($name === null) {
-            if (count($this->nodes) !== 1) {
+            if (count($this['nodes']) !== 1) {
                 $nodeNames = array();
-                foreach ($this->nodes as $node) {
+                foreach ($this['nodes'] as $node) {
                     $nodeNames[] = (string)$node;
                 }
                 throw new InvalidArgumentException(sprintf(
@@ -115,24 +175,26 @@ class Environment extends ArrayObject
                 ));
             }
 
-            return current($this->nodes);
+            return $this['nodes'][0];
         }
 
-        if (!isset($this->nodes[$name])) {
-            throw new OutOfBoundsException(sprintf(
-                'Environment: %s, Node: %s doesn\'t exist',
-                $this,
-                $name
-            ));
+        foreach ($this['nodes'] as $node) {
+            if (((string)$node) === $name) {
+                return $node;
+            }
         }
 
-        return $this->nodes[$name];
+        throw new OutOfBoundsException(sprintf(
+            'Environment: %s, Node: %s doesn\'t exist',
+            $this,
+            $name
+        ));
     }
 
     public function getNodes($role = null)
     {
         if ($role === null) {
-            return $this->nodes;
+            return $this['nodes'];
         }
 
         if (!is_string($role)) {
@@ -142,7 +204,7 @@ class Environment extends ArrayObject
             ));
         }
 
-        if (!isset($this->roles[$role])) {
+        if (!isset($this['roles'][$role])) {
             throw new OutOfBoundsException(sprintf(
                 'Environment: %s, Role: %s doesn\'t exist',
                 $this,
@@ -150,6 +212,6 @@ class Environment extends ArrayObject
             ));
         }
 
-        return $this->roles[$role];
+        return $this['roles'][$role];
     }
 }

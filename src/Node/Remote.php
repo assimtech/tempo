@@ -52,6 +52,10 @@ class Remote extends AbstractNode
             }
         }
 
+        if (!is_array($properties)) {
+            throw new InvalidArgumentException('properties must be either an array or string');
+        }
+
         $properties = self::setupDefaults($properties);
 
         self::validateProperties($properties);
@@ -73,6 +77,10 @@ class Remote extends AbstractNode
         if (!isset($properties['ssh']['control'])) {
             $properties['ssh']['control'] = array();
         }
+
+        $properties['ssh']['options'] = array_merge(array(
+            'RequestTTY' => 'no', // Disable pseudo-tty allocation
+        ), $properties['ssh']['options']);
 
         // Default control options
         $properties['ssh']['control'] = array_merge(array(
@@ -212,9 +220,6 @@ class Remote extends AbstractNode
         $processBuilder = $this->getProcessBuilder();
         $args = array(
             '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin)
-
-            '-o', // Disable pseudo-tty allocation
-            'RequestTTY=no',
 
             '-o',
             'ControlMaster=yes',

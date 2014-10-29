@@ -5,6 +5,7 @@ namespace Assimtech\Tempo;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Yaml\Parser;
 
 class Definition
 {
@@ -18,10 +19,82 @@ class Definition
      */
     private $commands;
 
-    public function __construct()
+    /**
+     * @param string|array|null $config Path to a config file or array of config or null for manual setup
+     */
+    public function __construct($config = null)
     {
         $this->environments = array();
         $this->commands = array();
+
+        if ($config === null) {
+            $config = array(
+                'nodes' => array(),
+                'environments' => array(),
+            );
+        }
+
+        if (is_string($config)) {
+            $yaml = new Parser();
+            $config = $yaml->parse(file_get_contents($config));
+        }
+
+        $environments = $this->getEnvironmentsFromConfig($config);
+
+        $this->addEnvironments($environments);
+    }
+
+    /**
+     * @param string|array|null $config Path to a config file or array of config or null for manual setup
+     * @return \Assimtech\Tempo\Node\AbstractNode[]
+     */
+    protected function getNodesFromConfig($config)
+    {
+        $nodes = array();
+
+        if (!isset($config['nodes'])) {
+            return $nodes;
+        }
+
+        foreach ($config['nodes'] as $nodeName => $nodeConfig) {
+            $nodes[$nodeName] = new Node\Remote($nodeConfig);
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * @param string|array|null $config Path to a config file or array of config or null for manual setup
+     * @return \Assimtech\Tempo\Environment[]
+     */
+    protected function getEnvironmentsFromConfig($config)
+    {
+        if (!isset($config['environments'])) {
+            throw new InvalidArgumentException('config: [environments] is mandatory');
+        }
+
+        $nodes = $this->getNodesFromConfig($config);
+
+        $environments = array();
+        if (isset($config['environments'])) {
+            foreach ($config['environments'] as $environmentConfig) {
+                if (isset($environmentConfig['nodes'])) {
+                    foreach ($environmentConfig['nodes'] as $i => $nodeName) {
+                        $environmentConfig['nodes'][$i] = $nodes[$nodeName];
+                    }
+                }
+                if (isset($environmentConfig['roles'])) {
+                    foreach ($environmentConfig['roles'] as $role => $nodeNames) {
+                        foreach ($nodeNames as $i => $nodeName) {
+                            $environmentConfig['roles'][$role][$i] = $nodes[$nodeName];
+                        }
+                    }
+                }
+                $environments[] = new Environment($environmentConfig);
+            }
+        }
+
+        return $environments;
     }
 
     /**
