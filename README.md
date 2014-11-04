@@ -15,6 +15,8 @@ If you place it in `~/bin/tempo` and make it executable you will be able to run 
 Create a `tempo.php` file in the root of your project containing the following:
 
 ```php
+<?php
+
 use Assimtech\Tempo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -66,6 +68,74 @@ As you might expect, the `tempo.php` will eventually become a little bloated. Us
 [Commands](docs/05-Commands.md) and [Tasks](docs/06-Tasks.md) to help save some time and make the definition easier
 to read. If you have a Task that should part of the core Tempo code base [please let us know](docs/07-Contributing.md).
 
+
+## A better layout
+
+The quick start example can become very hard to read once you add all of your environments, nodes and commands. It would
+be better to split this up.
+
+Create a `tempo.php` in the root of your project containing:
+
+```php
+<?php
+
+use Assimtech\Tempo;
+use Symfony\Component\Console\Command\Command;
+
+$tempo = new Tempo\Definition('tempo/tempo.yml');
+
+// Commands
+foreach ($tempo->getEnvironments() as $env) {
+    $whereami = new Command($env.':whereami');
+    $whereami->setCode(require 'tempo/whereami.php');
+
+    $tempo->addCommands(array(
+        $whereami,
+    ));
+}
+
+return $tempo;
+```
+
+Then create a `tempo/tempo.yml` containing:
+
+```yaml
+nodes:
+    server1:
+        ssh:
+            host: server1.example.com
+
+environments:
+    -
+        name: test
+        nodes:
+            - server1
+```
+
+And finally create your whereami command in `tempo/whereami.php`:
+
+```php
+<?php
+
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+/**
+ * @param \Symfony\Component\Console\Input\InputInterface $input
+ * @param \Symfony\Component\Console\Output\OutputInterface $output
+ * @var \Assimtech\Tempo\Environment $environment
+ */
+return function (InputInterface $input, OutputInterface $output) use ($env) {
+    $node = $env->getNode();
+
+    $output->write('I\'m on: ');
+    $hostname = $node->run('hostname --fqdn');
+    $output->writeln($hostname);
+
+    $ips = $node->run('/sbin/ifconfig');
+    $output->write($ips);
+};
+```
 
 ## Documentation
 
