@@ -64,15 +64,12 @@ tempo test:whereami
 Try adding more environments / servers / commands
 
 
+## A better layout
+
 As you might expect, the `tempo.php` will eventually become a little bloated. Use pre-defined
 [Commands](docs/05-Commands.md) and [Tasks](docs/06-Tasks.md) to help save some time and make the definition easier
 to read. If you have a Task that should part of the core Tempo code base [please let us know](docs/07-Contributing.md).
-
-
-## A better layout
-
-The quick start example can become very hard to read once you add all of your environments, nodes and commands. It would
-be better to split this up.
+It would also be better to split up the environment and node definitions and each command for readability.
 
 Create a `tempo.php` in the root of your project containing:
 
