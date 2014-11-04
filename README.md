@@ -36,14 +36,14 @@ $env1->addNode($server1);
 foreach ($tempo->getEnvironments() as $env) {
     $whereami = new Command($env.':whereami');
     $whereami->setCode(function (InputInterface $input, OutputInterface $output) use ($env) {
-        $node = $env->getNode();
+        foreach ($env->getNodes() as $node) {
+            $output->write('I\'m on: ');
+            $hostname = $node->run('hostname --fqdn');
+            $output->writeln($hostname);
 
-        $output->write('I\'m on: ');
-        $hostname = $node->run('hostname --fqdn');
-        $output->writeln($hostname);
-
-        $ips = $node->run('/sbin/ifconfig');
-        $output->write($ips);
+            $ips = $node->run('/sbin/ifconfig');
+            $output->write($ips);
+        }
     });
     $tempo->addCommand($whereami);
 }
@@ -126,14 +126,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @var \Assimtech\Tempo\Environment $environment
  */
 return function (InputInterface $input, OutputInterface $output) use ($env) {
-    $node = $env->getNode();
+    foreach ($env->getNodes() as $node) {
+        $output->write('I\'m on: ');
+        $hostname = $node->run('hostname --fqdn');
+        $output->writeln($hostname);
 
-    $output->write('I\'m on: ');
-    $hostname = $node->run('hostname --fqdn');
-    $output->writeln($hostname);
-
-    $ips = $node->run('/sbin/ifconfig');
-    $output->write($ips);
+        $ips = $node->run('/sbin/ifconfig');
+        $output->write($ips);
+    }
 };
 ```
 
