@@ -251,6 +251,7 @@ class Remote extends AbstractNode
         }
 
         $processBuilder = $this->getProcessBuilder();
+        $args = array();
         foreach ($this['ssh']['options'] as $option => $value) {
             $args[] = '-o';
             $args[] = $option.'='.$value;

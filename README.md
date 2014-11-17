@@ -1,6 +1,8 @@
 # tempo
 
 [![Build Status](https://travis-ci.org/assimtech/tempo.svg?branch=master)](https://travis-ci.org/assimtech/tempo)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/assimtech/tempo/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/assimtech/tempo/?branch=master)
+
 
 Tempo is a scripting tool for running commands on local or remote nodes. It was originally developed to script complex
 `php` project deployments however can be used for all kinds of tasks (e.g. unix user management, package updates etc).
