@@ -166,7 +166,7 @@ See "ControlPath" in [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/Open
 
 ##### ssh control ControlPersist
 
-Optional - `string` (Defaults to `10m` meaning leave the control master connection open for up to 10 minutes)
+Optional - `string` (Defaults to `5m` meaning leave the control master connection open for up to 5 minutes)
 
 The policy for leaving the ControlMaster connection open.
 See "ControlPersist" in [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5)
@@ -179,7 +179,7 @@ tempo command, tempo will attempt to re-establish it.
 Other options include times compatible with the TIME FORMATS section of
 [sshd_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/sshd_config.5)
 
-E.g. `10m` will mean the ControlMaster will be left open for 10 minutes. This could be used in conjunction with
+E.g. `5m` will mean the ControlMaster will be left open for 5 minutes. This could be used in conjunction with
 "closeOnDestruct" = `false` to allow successive tempo commands to re-use the first one's connection.
 
 Please be aware, leaving a ControlMaster connection open unnecessarily leaves an attack vector open for anyone with
@@ -188,7 +188,7 @@ access to your socket file on the host you are running tempo on (e.g. anyone wit
 
 ##### ssh control closeOnDestruct
 
-Optional - `boolean` (Defaults to `true`)
+Optional - `boolean` (Defaults to `false`)
 
 This will cause Tempo to attempt to close the ControlMaster connection on exit (if one has been established).
 
