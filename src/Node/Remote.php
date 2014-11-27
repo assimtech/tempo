@@ -90,8 +90,8 @@ class Remote extends AbstractNode
         if ($properties['ssh']['control']['useControlMaster']) {
             $properties['ssh']['control'] = array_merge(array(
                 'ControlPath' => '~/.ssh/tempo_' . $properties['ssh']['host'],
-                'ControlPersist' => '10m', // We could set to yes but if they Ctl+C the command the socket may be left
-                'closeOnDestruct' => true,
+                'ControlPersist' => '5m', // We could set to yes but if they Ctl+C the command the socket may be left
+                'closeOnDestruct' => false,
             ), $properties['ssh']['control']);
         }
 

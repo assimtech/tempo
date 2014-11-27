@@ -210,7 +210,32 @@ class RemoteTest extends PHPUnit_Framework_TestCase
             ))
         ;
 
-        $this->descopeRemote($host, $mockProcessBuilder);
+        $this->descopeRemote(array(
+            'ssh' => array(
+                'host' => $host,
+                'control' => array(
+                    'closeOnDestruct' => true,
+                ),
+            ),
+        ), $mockProcessBuilder);
+    }
+
+    public function testGetProcessBuilder()
+    {
+        $host = 'localhost';
+        $remote = new Remote(array(
+            'ssh' => array(
+                'host' => $host,
+                'control' => array(
+                    'ControlPath' => '/my/test/path',
+                ),
+            ),
+        ));
+
+        $processBuilder = $remote->getProcessBuilder();
+        $process = $processBuilder->getProcess();
+
+        $this->assertEquals("'ssh' '-o' 'ControlPath=/my/test/path'", $process->getCommandLine());
     }
 
     public function testEstablishMaster()
@@ -221,6 +246,9 @@ class RemoteTest extends PHPUnit_Framework_TestCase
                 'host' => $host,
                 'options' => array(
                     'Port' => 1234,
+                ),
+                'control' => array(
+                    'closeOnDestruct' => true,
                 ),
             ),
         );
@@ -248,7 +276,7 @@ class RemoteTest extends PHPUnit_Framework_TestCase
                 // Establish Control Master
                 array(explode(
                     ' ',
-                    '-n -o ControlMaster=yes -o ControlPersist=10m -o RequestTTY=no -o Port=1234 '.$host
+                    '-n -o ControlMaster=yes -o ControlPersist=5m -o RequestTTY=no -o Port=1234 '.$host
                 )),
                 // Execute
                 array(explode(
