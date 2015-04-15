@@ -21,28 +21,13 @@ live, we remove the current symlink and create a new one pointing at our new rel
 ```php
 <?php
 
-use Assimtech\Tempo;
+use Assimtech\Tempo\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Deploy extends Command
+class Deploy extends AbstractCommand
 {
-    /**
-     * @var \Assimtech\Tempo\Environment $env
-     */
-    private $env;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(Tempo\Environment $env)
-    {
-        $this->env = $env;
-
-        parent::__construct(sprintf('%s:deploy', $env));
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -103,29 +88,14 @@ Suppose we want to make the above `Deploy` example more robust.
 ```php
 <?php
 
-use Assimtech\Tempo;
+use Assimtech\Tempo\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class Deploy extends Command
+class Deploy extends AbstractCommand
 {
-    /**
-     * @var \Assimtech\Tempo\Environment $env
-     */
-    private $env;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(Tempo\Environment $env)
-    {
-        $this->env = $env;
-
-        parent::__construct(sprintf('%s:deploy', $env));
-    }
-
     /**
      * {@inheritdoc}
      */

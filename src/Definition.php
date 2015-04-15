@@ -20,7 +20,7 @@ class Definition
     private $commands;
 
     /**
-     * @param string|array|null $config Path to a config file or array of config or null for manual setup
+     * @param string|array|null $config Path to a tempo.yml file or config array or null for manual setup
      */
     public function __construct($config = null)
     {

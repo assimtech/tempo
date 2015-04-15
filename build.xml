@@ -15,7 +15,7 @@
     </target>
 
     <target name="cpd">
-        <exec executable="vendor/bin/phpcpd">
+        <exec executable="vendor/bin/phpcpd" failonerror="true">
             <arg value="--exclude=Test" />
             <arg path="src" />
         </exec>
@@ -31,7 +31,7 @@
     </target>
 
     <target name="md">
-        <exec executable="vendor/bin/phpmd">
+        <exec executable="vendor/bin/phpmd" failonerror="true">
             <arg path="src" />
             <arg value="text" />
             <arg value="phpmd.xml" />

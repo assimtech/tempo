@@ -82,7 +82,7 @@ Create a `tempo.php` in the root of your project containing:
 use Assimtech\Tempo;
 use Symfony\Component\Console\Command\Command;
 
-$tempo = new Tempo\Definition('tempo/tempo.yml');
+$tempo = new Tempo\Definition(__DIR__ . '/tempo/tempo.yml');
 
 // Commands
 foreach ($tempo->getEnvironments() as $env) {
