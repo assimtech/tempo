@@ -122,6 +122,21 @@ class Remote extends AbstractNode
     }
 
     /**
+     * @return array
+     */
+    private function buildSshOptions()
+    {
+        $args = array();
+
+        foreach ($this['ssh']['options'] as $option => $value) {
+            $args[] = '-o';
+            $args[] = $option.'='.$value;
+        }
+
+        return $args;
+    }
+
+    /**
      * Destroy ControlMaster if nessasary
      * @throws \RuntimeException
      */
@@ -218,7 +233,7 @@ class Remote extends AbstractNode
     protected function establishControlMaster()
     {
         $processBuilder = $this->getProcessBuilder();
-        $args = array(
+        $args = array_merge(array(
             '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin)
 
             '-o',
@@ -226,11 +241,7 @@ class Remote extends AbstractNode
 
             '-o', // ControlPersist - How to persist the master socket
             'ControlPersist='.$this['ssh']['control']['ControlPersist'],
-        );
-        foreach ($this['ssh']['options'] as $option => $value) {
-            $args[] = '-o';
-            $args[] = $option.'='.$value;
-        }
+        ), $this->buildSshOptions());
         $args[] = (string)$this;
         $processBuilder->setArguments($args);
         $process = $processBuilder->getProcess();
@@ -251,11 +262,7 @@ class Remote extends AbstractNode
         }
 
         $processBuilder = $this->getProcessBuilder();
-        $args = array();
-        foreach ($this['ssh']['options'] as $option => $value) {
-            $args[] = '-o';
-            $args[] = $option.'='.$value;
-        }
+        $args = $this->buildSshOptions();
         $args[] = (string)$this;
         $processBuilder->setArguments($args);
         $processBuilder
