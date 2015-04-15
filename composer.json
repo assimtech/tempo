@@ -5,7 +5,7 @@
     "homepage": "https://github.com/assimtech/tempo",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.3",
         "symfony/console": "~2",
         "symfony/process": "~2",
         "symfony/yaml": "~2"
@@ -22,7 +22,5 @@
             "Assimtech\\Tempo\\": "src"
         }
     },
-    "bin": [
-        "bin/tempo"
-    ]
+    "bin": [ "bin/tempo" ]
 }
