@@ -59,6 +59,7 @@ final class Compiler
             ->in('vendor/composer')
             ->in('vendor/symfony/console')
             ->in('vendor/symfony/process')
+            ->in('vendor/symfony/yaml')
             ->in('src')
         ;
         foreach ($finder as $file) {
