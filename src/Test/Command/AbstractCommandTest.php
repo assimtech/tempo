@@ -5,7 +5,7 @@ namespace Assimtech\Tempo\Test;
 use PHPUnit_Framework_TestCase;
 use Assimtech\Tempo\Environment;
 
-class CommandTest extends PHPUnit_Framework_TestCase
+class AbstractCommandTest extends PHPUnit_Framework_TestCase
 {
     public function argsProvider()
     {
@@ -25,11 +25,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testConstructs($args)
     {
         $command = $this->getMockForAbstractClass(
-            'Assimtech\Tempo\AbstractCommand',
+            'Assimtech\Tempo\Command\AbstractCommand',
             $args,
             'MyCommand'
         );
-        $this->assertInstanceOf('Assimtech\Tempo\AbstractCommand', $command);
+        $this->assertInstanceOf('Assimtech\Tempo\Command\AbstractCommand', $command);
         $this->assertEquals('test:mycommand', $command->getName());
     }
 }

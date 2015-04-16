@@ -1,8 +1,9 @@
 <?php
 
-namespace Assimtech\Tempo;
+namespace Assimtech\Tempo\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Assimtech\Tempo\Environment;
 
 abstract class AbstractCommand extends Command
 {
@@ -13,6 +14,7 @@ abstract class AbstractCommand extends Command
 
     /**
      * {@inheritdoc}
+     *
      * @param \Assimtech\Tempo\Environment $env
      *
      * The environment name will be prefixed to the command name, e.g.

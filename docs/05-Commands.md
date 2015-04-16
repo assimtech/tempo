@@ -21,7 +21,7 @@ live, we remove the current symlink and create a new one pointing at our new rel
 ```php
 <?php
 
-use Assimtech\Tempo\AbstractCommand;
+use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -88,7 +88,7 @@ Suppose we want to make the above `Deploy` example more robust.
 ```php
 <?php
 
-use Assimtech\Tempo\AbstractCommand;
+use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

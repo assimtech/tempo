@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Assimtech\\Tempo\\": "src"
+            "Assimtech\\Tempo\\": "src/Tempo"
         }
     },
     "bin": [ "bin/tempo" ]

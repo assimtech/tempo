@@ -6,10 +6,7 @@ nodes:
 environments:
     -
         name: test
-        nodes:
-            - server1
+        nodes: [ server1 ]
         roles:
-            web:
-                - server1
-            db:
-                - server1
+            web: [ server1 ]
+            db: [ server1 ]
