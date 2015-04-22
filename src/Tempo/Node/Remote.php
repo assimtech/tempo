@@ -124,7 +124,7 @@ class Remote extends AbstractNode
     /**
      * @return array
      */
-    private function buildSshOptions()
+    private function getSshOptionArgs()
     {
         $args = array();
 
@@ -241,7 +241,7 @@ class Remote extends AbstractNode
 
             '-o', // ControlPersist - How to persist the master socket
             'ControlPersist='.$this['ssh']['control']['ControlPersist'],
-        ), $this->buildSshOptions());
+        ), $this->getSshOptionArgs());
         $args[] = (string)$this;
         $processBuilder->setArguments($args);
         $process = $processBuilder->getProcess();
@@ -262,7 +262,7 @@ class Remote extends AbstractNode
         }
 
         $processBuilder = $this->getProcessBuilder();
-        $args = $this->buildSshOptions();
+        $args = $this->getSshOptionArgs();
         $args[] = (string)$this;
         $processBuilder->setArguments($args);
         $processBuilder
