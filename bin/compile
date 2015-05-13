@@ -3,25 +3,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Assimtech\Tempo\Node\Local;
-use Assimtech\Tempo\Phar\Compiler;
+$pharFile = 'tempo.phar';
 
-$local = new Local();
-$compiler = new Compiler($local);
-
-try {
-    $compiler->compile();
-} catch (Exception $e) {
-    print('Failed to compile tempo.phar'.PHP_EOL);
-    print('============================'.PHP_EOL);
-    printf('%s - %s'.PHP_EOL,
-        get_class($e),
-        $e->getMessage()
-    );
-    printf('At %s:%d'.PHP_EOL,
-        $e->getFile(),
-        $e->getLine()
-    );
-
-    exit(1);
-}
+$phar = new Phar($pharFile);
+$local = new Assimtech\Tempo\Node\Local();
+$compiler = new Assimtech\Tempo\Phar\Compiler($phar, $local);
+$compiler->compile();

@@ -2,9 +2,9 @@
 
 namespace Assimtech\Tempo\Phar;
 
+use Phar;
 use Assimtech\Tempo\Node\Local;
 use Symfony\Component\Finder\Finder;
-use Phar;
 use RuntimeException;
 
 final class Compiler
@@ -20,6 +20,11 @@ final class Compiler
     private $baseDir;
 
     /**
+     * @var \Phar $phar
+     */
+    private $phar;
+
+    /**
      * @var \Assimtech\Tempo\Node\Local $local
      */
     private $local;
@@ -27,11 +32,11 @@ final class Compiler
     /**
      * @param \Assimtech\Tempo\Node\Local $local
      */
-    public function __construct(Local $local)
+    public function __construct(Phar $phar, Local $local)
     {
-        $this->pharFile = 'tempo.phar';
-        $this->baseDir = realpath(__DIR__.'/../../../');
+        $this->phar = $phar;
         $this->local = $local;
+        $this->baseDir = realpath(__DIR__.'/../../');
     }
 
     /**
@@ -40,17 +45,15 @@ final class Compiler
     public function compile()
     {
         $this->checkWorkingDirectory();
-
         $this->checkVersion();
 
         if (file_exists($this->pharFile)) {
             unlink($this->pharFile);
         }
 
-        $phar = new Phar($this->pharFile);
-        $phar->setSignatureAlgorithm(Phar::SHA1);
+        $this->phar->setSignatureAlgorithm(Phar::SHA1);
 
-        $phar->startBuffering();
+        $this->phar->startBuffering();
 
         $finder = new Finder();
         $finder->files()
@@ -65,20 +68,20 @@ final class Compiler
             ->in('src')
         ;
         foreach ($finder as $file) {
-            $phar->addFile($file);
+            $this->phar->addFile($file);
         }
-        $phar->addFile('vendor/autoload.php');
+        $this->phar->addFile('vendor/autoload.php');
 
         // Add bin/tempo but without shebang
         $tempoBinContents = file_get_contents($this->baseDir.'/bin/tempo');
         $tempoBinPhar = preg_replace('{^#!/usr/bin/env php\s*}', '', $tempoBinContents);
-        $phar->addFromString('bin/tempo', $tempoBinPhar);
+        $this->phar->addFromString('bin/tempo', $tempoBinPhar);
 
         // Stubs
         $stub = file_get_contents(__DIR__.'/tempo.phar.stub');
-        $phar->setStub($stub);
+        $this->phar->setStub($stub);
 
-        $phar->stopBuffering();
+        $this->phar->stopBuffering();
     }
 
     private function checkWorkingDirectory()
