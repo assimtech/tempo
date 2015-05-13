@@ -2,7 +2,7 @@
 
 ## As a PHP Archive (PHAR) - This is the simplest way to use tempo
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.2.00/tempo.phar) and place where you want.
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.1.0/tempo.phar) and place where you want.
 If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects. Don't
 forget to restart your terminal if you just created `~/bin`.
 

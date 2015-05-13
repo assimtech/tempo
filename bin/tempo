@@ -19,7 +19,6 @@ if (isset($file)) {
 }
 
 $definitionPath = 'tempo.php';
-
 $definitionLoader = new Assimtech\Tempo\Loader\DefinitionLoader();
 try {
     $definition = $definitionLoader->load($definitionPath);
