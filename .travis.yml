@@ -12,7 +12,7 @@ before_script:
     - composer self-update
     - composer install
 
-script: vendor/bin/phpspec run -c coverage/clover.xml
+script: vendor/bin/phpspec run -c phpspec-clover.yml
 
 after_success:
     - wget https://scrutinizer-ci.com/ocular.phar
