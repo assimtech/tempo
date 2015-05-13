@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="assimtech/tempo" default="dev">
 
-    <target name="dev" depends="lint,cpd,cs,md,test"/>
+    <target name="dev" depends="lint,cpd,cs,md,test,spec"/>
 
     <target name="lint">
         <apply executable="php" failonerror="true">
@@ -31,7 +31,7 @@
     </target>
 
     <target name="md">
-        <exec executable="vendor/bin/phpmd" failonerror="true">
+        <exec executable="vendor/bin/phpmd">
             <arg path="src" />
             <arg value="text" />
             <arg value="phpmd.xml" />
@@ -43,4 +43,13 @@
             <arg value="--stop-on-failure" />
         </exec>
     </target>
+
+    <target name="spec">
+        <exec executable="vendor/bin/phpspec" failonerror="true">
+            <arg value="run" />
+            <arg value="--no-interaction" />
+            <arg value="--stop-on-failure" />
+        </exec>
+    </target>
+
 </project>

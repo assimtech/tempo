@@ -1,15 +1,33 @@
 #!/usr/bin/env php
 <?php
 
-if (file_exists(__DIR__ . '/../../../autoload.php')) {
-    require_once __DIR__ . '/../../../autoload.php';
-} else {
-    require_once __DIR__ . '/../vendor/autoload.php';
+foreach (array(
+        __DIR__ . '/../../autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+        __DIR__ . '/vendor/autoload.php',
+    ) as $file) {
+    if (file_exists($file)) {
+        require $file;
+        unset($file);
+        break;
+    }
+}
+if (isset($file)) {
+    fwrite(STDERR, 'Unable to locate autoload.php, ensure you have installed dependencies (composer install).'.PHP_EOL);
+    fwrite(STDERR, 'For more information see http://getcomposer.org/'.PHP_EOL);
+    exit(1);
+}
+
+$definitionPath = 'tempo.php';
+
+$definitionLoader = new Assimtech\Tempo\Loader\DefinitionLoader();
+try {
+    $definition = $definitionLoader->load($definitionPath);
+} catch (Exception $e) {
+    fwrite(STDERR, $e->getMessage() . PHP_EOL);
+    exit(1);
 }
 
 $application = new Symfony\Component\Console\Application('tempo', 'dev-master');
-
-$tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
-$application->addCommands($tempo->getCommands());
-
+$application->addCommands($definition->getCommands());
 $application->run();

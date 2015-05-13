@@ -1,0 +1,16 @@
+suites:
+    AssimtechTempo:
+        namespace: Assimtech\Tempo
+        psr4_prefix: Assimtech\Tempo
+
+extensions:
+    - PhpSpec\Extension\CodeCoverageExtension
+
+code_coverage:
+    format:
+        - clover
+    output:
+        clover: coverage/clover.xml
+    blacklist:
+        - src/Test
+        - src/Phar

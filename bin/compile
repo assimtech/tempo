@@ -3,9 +3,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Assimtech\Tempo\Node\Local;
 use Assimtech\Tempo\Phar\Compiler;
 
-$compiler = new Compiler();
+$local = new Local();
+$compiler = new Compiler($local);
 
 try {
     $compiler->compile();

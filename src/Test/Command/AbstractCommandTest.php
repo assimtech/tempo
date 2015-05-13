@@ -1,6 +1,6 @@
 <?php
 
-namespace Assimtech\Tempo\Test;
+namespace Assimtech\Tempo\Test\Command;
 
 use PHPUnit_Framework_TestCase;
 use Assimtech\Tempo\Environment;

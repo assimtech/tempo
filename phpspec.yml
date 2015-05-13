@@ -1,0 +1,4 @@
+suites:
+    AssimtechTempo:
+        namespace: Assimtech\Tempo
+        psr4_prefix: Assimtech\Tempo

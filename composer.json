@@ -12,16 +12,16 @@
         "symfony/yaml": "~2"
     },
     "require-dev": {
-        "pdepend/pdepend": "~2",
+        "sebastian/phpcpd": "~2",
+        "squizlabs/php_codesniffer": "~1",
         "phpmd/phpmd": "~2",
         "phpunit/phpunit": "~4",
-        "sebastian/phpcpd": "~2",
-        "squizlabs/php_codesniffer": "~1"
+        "phpspec/phpspec": "~2",
+        "henrikbjorn/phpspec-code-coverage": "~1"
     },
     "autoload": {
         "psr-4": {
-            "Assimtech\\Tempo\\Test\\": "src/Test",
-            "Assimtech\\Tempo\\": "src/Tempo"
+            "Assimtech\\Tempo\\": "src"
         }
     },
     "bin": [ "bin/tempo" ]

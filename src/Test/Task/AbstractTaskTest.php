@@ -3,8 +3,6 @@
 namespace Assimtech\Tempo\Test\Task;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractTaskTest extends PHPUnit_Framework_TestCase
 {

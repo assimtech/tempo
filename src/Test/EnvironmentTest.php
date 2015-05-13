@@ -14,17 +14,6 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage properties must be either an array or string
-     */
-    public function testInvalidConstruct()
-    {
-        $config = 1;
-
-        new Environment($config);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage property: [name] is mandatory
      */
     public function testMissingName()
@@ -37,7 +26,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage property: [nodes][] must be instances of Assimtech\Tempo\Node\AbstractNode
+     * @expectedExceptionMessage ty: [nodes] must implement \Assimtech\Tempo\Node\NodeInterface, [nodes][0] is a integer
      */
     public function testInvalidNode()
     {
@@ -53,7 +42,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage property: [nodes][] contains duplicate node: server1
+     * @expectedExceptionMessage property: [nodes][] contains a duplicate node: server1
      */
     public function testDuplicateNode()
     {
@@ -70,7 +59,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage property: [roles][web][server1] is not a member of [nodes][]
+     * @expectedExceptionMessage property: [roles][web][0] (server1) is not a member of [nodes][]
      */
     public function testRoleMissingNode()
     {
@@ -137,7 +126,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Environment: test, roles must be a string or array of strings
+     * @expectedExceptionMessage Environment: test, roles must be a string or an array of strings
      */
     public function testAddNodeWithInvalidRole()
     {
@@ -151,7 +140,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Environment: test, roles must be a string or array of strings
+     * @expectedExceptionMessage Environment: test, roles must be a string or an array of strings
      */
     public function testAddNodeWithInvalidRoles()
     {

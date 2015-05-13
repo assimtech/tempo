@@ -82,7 +82,7 @@ Create a `tempo.php` in the root of your project containing:
 use Assimtech\Tempo;
 use Symfony\Component\Console\Command\Command;
 
-$tempo = new Tempo\Definition(__DIR__ . '/tempo/tempo.yml');
+$tempo = new Tempo\Definition(__DIR__ . '/tempo/infrastructure.yml');
 
 // Commands
 foreach ($tempo->getEnvironments() as $env) {
@@ -108,8 +108,7 @@ nodes:
 environments:
     -
         name: test
-        nodes:
-            - server1
+        nodes: [ server1 ]
 ```
 
 And finally create your whereami command in `tempo/whereami.php`:

@@ -96,17 +96,6 @@ class RemoteTest extends PHPUnit_Framework_TestCase
         return $mockProcess;
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage properties must be either an array or string
-     */
-    public function testConstructInvalidConfig()
-    {
-        $config = 1;
-
-        new Remote($config);
-    }
-
     public function testHost()
     {
         $host = 'localhost';
@@ -122,7 +111,7 @@ class RemoteTest extends PHPUnit_Framework_TestCase
      */
     public function testNoHost()
     {
-        new Remote('');
+        new Remote();
     }
 
     public function testUserAtHost()
