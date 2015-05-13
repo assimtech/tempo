@@ -8,9 +8,9 @@ use Assimtech\Tempo\Factory\InfrastructureFactory;
 class InfrastructureLoader extends AbstractLoader
 {
     /**
-     * @var \Assimtech\Tempo\Factory\InfrastructureFactory $infrastructureFactory
+     * @var \Assimtech\Tempo\Factory\InfrastructureFactory $factory
      */
-    private $infrastructureFactory;
+    private $factory;
 
     /**
      * @var \Symfony\Component\Yaml\Parser $yamlParser
@@ -18,12 +18,12 @@ class InfrastructureLoader extends AbstractLoader
     private $yamlParser;
 
     /**
-     * @param \Assimtech\Tempo\Factory\InfrastructureFactory $infrastructureFactory
+     * @param \Assimtech\Tempo\Factory\InfrastructureFactory $factory
      * @param \Symfony\Component\Yaml\Parser $yamlParser
      */
-    public function __construct(InfrastructureFactory $infrastructureFactory, Yaml\Parser $yamlParser)
+    public function __construct(InfrastructureFactory $factory, Yaml\Parser $yamlParser)
     {
-        $this->infrastructureFactory = $infrastructureFactory;
+        $this->factory = $factory;
         $this->yamlParser = $yamlParser;
     }
 
@@ -37,7 +37,7 @@ class InfrastructureLoader extends AbstractLoader
         $this->validatePath($path);
         $yaml = file_get_contents($path);
         $config = $this->yamlParser->parse($yaml);
-        $infrastructure = $this->infrastructureFactory->create($config);
+        $infrastructure = $this->factory->create($config);
 
         return $infrastructure;
     }

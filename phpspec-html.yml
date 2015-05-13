@@ -12,5 +12,4 @@ code_coverage:
     output:
         html: coverage
     blacklist:
-        - src/Test
         - src/Phar

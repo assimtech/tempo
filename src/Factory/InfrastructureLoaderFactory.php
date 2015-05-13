@@ -16,12 +16,12 @@ class InfrastructureLoaderFactory
      */
     public static function create()
     {
-        $nodeFactory = new Factory\NodeFactory();
-        $envFactory = new Factory\EnvironmentFactory();
-        $infrastructureFactory = new Factory\InfrastructureFactory($nodeFactory, $envFactory);
-        $yamlParser = new Yaml\Parser();
-        $infrastructureLoader = new InfrastructureLoader($infrastructureFactory, $yamlParser);
-
-        return $infrastructureLoader;
+        return new InfrastructureLoader(
+            new Factory\InfrastructureFactory(
+                new Factory\NodeFactory(),
+                new Factory\EnvironmentFactory()
+            ),
+            new Yaml\Parser()
+        );
     }
 }
