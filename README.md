@@ -20,85 +20,28 @@ Create a `tempo.php` file in the root of your project containing the following:
 ```php
 <?php
 
-use Assimtech\Tempo;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-$tempo = new Tempo\Definition();
-
-// Environments
-$env1 = new Tempo\Environment('test');
-$tempo->addEnvironment($env1);
-
-// Nodes
-$server1 = new Tempo\Node\Remote('server1.example.com');
-$env1->addNode($server1);
-
-// Commands
-foreach ($tempo->getEnvironments() as $env) {
-    $whereami = new Command($env.':whereami');
-    $whereami->setCode(function (InputInterface $input, OutputInterface $output) use ($env) {
-        foreach ($env->getNodes() as $node) {
-            $output->write('I\'m on: ');
-            $hostname = $node->run('hostname --fqdn');
-            $output->writeln($hostname);
-
-            $ips = $node->run('/sbin/ifconfig');
-            $output->write($ips);
-        }
-    });
-    $tempo->addCommand($whereami);
-}
-
-return $tempo;
-```
-
-Change "server1.example.com" to a server you have ssh access to.
-If you need to change username / port etc, please see the documentation on how to setup a [Node](docs/04-Nodes.md)
-
-
-Run tempo from within the root of your project:
-
-```shell
-tempo test:whereami
-```
-
-Try adding more environments / servers / commands
-
-
-## A better layout
-
-As you might expect, the `tempo.php` will eventually become a little bloated. Use pre-defined
-[Commands](docs/05-Commands.md) and [Tasks](docs/06-Tasks.md) to help save some time and make the definition easier
-to read. If you have a Task that should part of the core Tempo code base [please let us know](docs/07-Contributing.md).
-It would also be better to split up the environment and node definitions and each command for readability.
-
-Create a `tempo.php` in the root of your project containing:
-
-```php
-<?php
+// If you have installed tempo with composer into your project, omit the autoloader
+require_once __DIR__ . '/vendor/autoload.php';
+// If you aren't using composer you are responsible for loading MyProject\Tempo\Command\* etc
+// This can be done with require's or your own autoloader
 
 use Assimtech\Tempo;
-use Symfony\Component\Console\Command\Command;
+use MyProject\Tempo\Command;
 
-$tempo = new Tempo\Definition(__DIR__ . '/tempo/infrastructure.yml');
+// Infrastructure
+$infrastructureLoader = Tempo\Factory\InfrastructureLoaderFactory::create();
+$infrastructure = $infrastructureLoader->load(__DIR__ . '/tempo/infrastructure.yml');
 
 // Commands
-foreach ($tempo->getEnvironments() as $env) {
-    $whereami = new Command($env.':whereami');
-    $whereami->setCode(require 'tempo/whereami.php');
-
-    $tempo->addCommands(array(
-        $whereami,
-    ));
+$definition = new Tempo\Definition();
+foreach ($infrastructure->getEnvironments() as $env) {
+    $definition->addCommand(new Command\WhereAmI($env));
 }
 
-return $tempo;
+return $definition;
 ```
 
-Then create a `tempo/tempo.yml` containing:
-
+Then create a `tempo/infrastructure.yml` file containing the following:
 ```yaml
 nodes:
     server1:
@@ -108,33 +51,50 @@ nodes:
 environments:
     -
         name: test
-        nodes: [ server1 ]
+        nodes: [ server1, server2 ]
 ```
 
-And finally create your whereami command in `tempo/whereami.php`:
+Change "server1.example.com" to a server you have ssh access to.
+If you need to change username / port etc, please see the documentation on how to setup a [Node](docs/04-Nodes.md)
 
+
+Then create a `MyProject\Tempo\Command\WhereAmI` class containing the following:
 ```php
 <?php
 
+namespace MyProject\Tempo\Command;
+
+use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @param \Symfony\Component\Console\Input\InputInterface $input
- * @param \Symfony\Component\Console\Output\OutputInterface $output
- * @var \Assimtech\Tempo\Environment $environment
- */
-return function (InputInterface $input, OutputInterface $output) use ($env) {
-    foreach ($env->getNodes() as $node) {
-        $output->write('I\'m on: ');
-        $hostname = $node->run('hostname --fqdn');
-        $output->writeln($hostname);
+class WhereAmI extends AbstractCommand
+{
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        foreach ($this->env->getNodes() as $node) {
+            $output->write("I'm on: ");
+            $hostname = $node->run('hostname --fqdn');
+            $output->writeln($hostname);
 
-        $ips = $node->run('/sbin/ifconfig');
-        $output->write($ips);
+            $ips = $node->run('/sbin/ifconfig');
+            $output->writeln($ips);
+        }
     }
-};
+}
 ```
+
+Run tempo from within the root of your project:
+
+```shell
+tempo test:whereami
+```
+
+Try adding more environments / servers / commands etc
+
 
 ## Documentation
 
