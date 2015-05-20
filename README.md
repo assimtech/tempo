@@ -83,6 +83,7 @@ class WhereAmI extends AbstractCommand
             $ips = $node->run('/sbin/ifconfig');
             $output->writeln($ips);
         }
+        return 0;
     }
 }
 ```
