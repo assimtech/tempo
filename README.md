@@ -81,11 +81,9 @@ class WhereAmI extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->env->getNodes() as $node) {
-            $hostname = $node->run('hostname --fqdn');
-            $output->writeln("I'm on: $hostname");
-
-            $ips = $node->run('/sbin/ifconfig');
-            $output->writeln($ips);
+            $output->write("<comment>Checking uname of $node: </comment>");
+            $uname = $node->run('uname -a');
+            $output->writeln("<info>$uname</info>");
         }
         return 0;
     }
