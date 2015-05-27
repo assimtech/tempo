@@ -27,6 +27,6 @@ try {
     exit(1);
 }
 
-$application = new Symfony\Component\Console\Application('tempo', '0.2.1');
+$application = new Symfony\Component\Console\Application('tempo', 'dev-master');
 $application->addCommands($definition->getCommands());
 $application->run();
