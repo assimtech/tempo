@@ -5,6 +5,8 @@ namespace Assimtech\Tempo\Node;
 use Assimtech\Tempo\ArrayObject\ValidatableArrayObject;
 use InvalidArgumentException;
 use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Assimtech\Tempo\Process\Exception\RemoteProcessFailedException;
 
 class Remote extends ValidatableArrayObject implements NodeInterface
 {
@@ -267,7 +269,17 @@ class Remote extends ValidatableArrayObject implements NodeInterface
         $process = $processBuilder->getProcess();
 
         $process->setTimeout(null);
-        $process->mustRun();
+        try {
+            $process->mustRun();
+        } catch (ProcessFailedException $e) {
+            if ($process->getExitCode() !== 255) {
+                // Rebuild the exception to expose actual failed command routed through ssh
+                $process = $e->getProcess();
+                throw new RemoteProcessFailedException($process);
+            }
+
+            throw $e;
+        }
 
         return $process->getOutput();
     }
