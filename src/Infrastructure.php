@@ -12,9 +12,6 @@ class Infrastructure
      */
     private $environments;
 
-    /**
-     * @param string|array|null $config Path to a tempo.yml file or config array or null for manual setup
-     */
     public function __construct()
     {
         $this->environments = array();
