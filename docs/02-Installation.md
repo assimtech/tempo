@@ -13,17 +13,11 @@ You could also add it to a systemwide `bin` directory such as `/usr/local/bin/te
 
 If your project is already using composer, add a dependency to your project's `composer.json`.
 
-```json
-{
-    "require": {
-        "assimtech/tempo": "0.*"
-    }
-}
+```shell
+composer require assimtech/tempo
 ```
 
-This will make tempo share your autoloader so you can reference any [Environments](03-Environments.md),
-[Nodes](04-Nodes.md), [Commands](05-Commands.md) or [Tasks](06-Tasks.md) from either tempo's core or your project's
-namespace without having to do any special loading in your `tempo.php`.
+This will make tempo share your autoloader so you can reference any namespaces available within your project.
 
 
 ### As part of your existing Symfony 2 console application
@@ -32,16 +26,13 @@ Since tempo exposes commands compatible with a `Symfony\Component\Console\Applic
 commands to your exiting Symfony Console application.  This would allow you to run tempo from your normal application's
 entry point.
 
-To achieve this, the best place to start is to have a read of `bin/tempo`.  The only part you need is:
+To achieve this, the best place to start is to have a read of `bin/tempo`.  You simply need to add your tempo commands
+to your symfony application:
 
 ```php
-$tempo = Assimtech\Tempo\Loader::loadTempoDefinition();
-$application->addCommands($tempo->getCommands());
+/** @var Assimtech\Tempo\Definition $definition */
+$application->addCommands($definition->getCommands());
 ```
-
-The loader simply loads the tempo definition from your project's `tempo.php`.
-You can then get the `Symfony\Component\Console\Command\Command`'s from `$tempo`
-and add them to your existing `Symfony\Component\Console\Application $application`.
 
 
 ## Use from source / git

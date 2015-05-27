@@ -103,7 +103,8 @@ class Deploy extends AbstractCommand
     {
         $currentPath = '/var/www/example.com/current';
         $releasesPath = '/var/www/example.com/releases';
-        $releasePath = $releasesPath.'/'.date('Y-m-d\TH:i:s');
+        $releaseDir = date('Y-m-d\TH:i:s');
+        $releasePath = $releasesPath.'/'.$releaseDir;
 
         $local = new Tempo\Node\Local();
         $remote = $this->env->getNode();
@@ -127,10 +128,11 @@ class Deploy extends AbstractCommand
         }
 
         // Put it live
+        $output->writeln('Going live');
         $remote->run(sprintf(
             'rm -f %1$s && ln -s %2$s %1$s',
             escapeshellarg($currentPath),
-            escapeshellarg($releasePath)
+            escapeshellarg('releases/'.$releaseDir)
         ));
         $output->writeln(sprintf('We are live on %s', $remote));
     }

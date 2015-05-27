@@ -4,6 +4,11 @@
     "description": "A scripting tool for running commands on local or remote nodes",
     "homepage": "https://github.com/assimtech/tempo",
     "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Assimtech\\Tempo\\": "src"
+        }
+    },
     "require": {
         "php": ">=5.3.3",
 
@@ -17,11 +22,6 @@
         "phpmd/phpmd": "~2",
         "phpspec/phpspec": "~2",
         "henrikbjorn/phpspec-code-coverage": "~1"
-    },
-    "autoload": {
-        "psr-4": {
-            "Assimtech\\Tempo\\": "src"
-        }
     },
     "bin": [ "bin/tempo" ]
 }

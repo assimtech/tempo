@@ -14,6 +14,11 @@ Tempo is a scripting tool for running commands on local or remote nodes. It was 
 Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.1.0/tempo.phar).
 If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects.
 
+Alternatively, install tempo into your project with composer:
+
+```shell
+composer require assimtech/tempo
+```
 
 Create a `tempo.php` file in the root of your project containing the following:
 
@@ -30,7 +35,7 @@ use MyProject\Tempo\Command;
 
 // Infrastructure
 $infrastructureLoader = Tempo\Factory\InfrastructureLoaderFactory::create();
-$infrastructure = $infrastructureLoader->load(__DIR__ . '/tempo/infrastructure.yml');
+$infrastructure = $infrastructureLoader->load(__DIR__ . '/infrastructure.yml');
 
 // Commands
 $definition = new Tempo\Definition();
@@ -41,7 +46,7 @@ foreach ($infrastructure->getEnvironments() as $env) {
 return $definition;
 ```
 
-Then create a `tempo/infrastructure.yml` file containing the following:
+Then create a `infrastructure.yml` file containing the following:
 ```yaml
 nodes:
     server1:
