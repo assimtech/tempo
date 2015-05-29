@@ -17,11 +17,11 @@
         "symfony/yaml": "~2"
     },
     "require-dev": {
-        "sebastian/phpcpd": "~2",
-        "squizlabs/php_codesniffer": "~1",
-        "phpmd/phpmd": "~2",
-        "phpspec/phpspec": "~2",
-        "henrikbjorn/phpspec-code-coverage": "~1"
+        "sebastian/phpcpd": "~2.0",
+        "squizlabs/php_codesniffer": "~2.3",
+        "phpmd/phpmd": "~2.2",
+        "phpspec/phpspec": "~2.2",
+        "henrikbjorn/phpspec-code-coverage": "~1.0"
     },
     "bin": [ "bin/tempo" ]
 }
