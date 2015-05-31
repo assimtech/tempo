@@ -10,7 +10,7 @@ your normal shell so if you use an agent or keychain, tempo will use it.
 Tempo definitions are written in PHP because it's a language you are hopefully already familiar with. It also gives you
 a lot of power to do all kinds of advanced things to achieve your task.
 
-Some of the [Tasks](docs/06-Tasks.md) you may want to do will already be built and can just be used with minimal effort.
+Some of the [Tasks](06-Tasks.md) you may want to do will already be built and can just be used with minimal effort.
 
 
 ## Topics
