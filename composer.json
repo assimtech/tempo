@@ -12,9 +12,9 @@
     "require": {
         "php": ">=5.3.3",
 
-        "symfony/console": "~2",
-        "symfony/process": "~2",
-        "symfony/yaml": "~2"
+        "symfony/console": "~2.0",
+        "symfony/process": "~2.0",
+        "symfony/yaml": "~2.0"
     },
     "require-dev": {
         "sebastian/phpcpd": "~2.0",
