@@ -12,6 +12,7 @@
     "require": {
         "php": ">=5.5.9",
 
+        "assimtech/sysexits": "^1.0",
         "symfony/console": "^3.0",
         "symfony/process": "^3.0",
         "symfony/yaml": "^3.0"

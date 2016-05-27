@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Assimtech\Tempo\Process\Exception\RemoteProcessFailedException;
+use Assimtech\Sysexits;
 
 class Remote extends ValidatableArrayObject implements NodeInterface
 {
@@ -222,7 +223,7 @@ class Remote extends ValidatableArrayObject implements NodeInterface
 
         $ret = $process->getExitCode();
 
-        return ($ret === 0);
+        return ($ret === Sysexits::EX_OK);
     }
 
     /**

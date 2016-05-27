@@ -4,9 +4,40 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf3dcf043b5c4c769f896257088bf471",
-    "content-hash": "303e3de19ecbbc7b95f7fd3ef003ff62",
+    "hash": "b951758b1b65392b1f0d9a42c2e19c63",
+    "content-hash": "9db7987ae91ebd254b10ada40aaa9654",
     "packages": [
+        {
+            "name": "assimtech/sysexits",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/assimtech/sysexits.git",
+                "reference": "d76f4921b803c01af7cfedff420381ebe67b5271"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/assimtech/sysexits/zipball/d76f4921b803c01af7cfedff420381ebe67b5271",
+                "reference": "d76f4921b803c01af7cfedff420381ebe67b5271",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Assimtech\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-4-Clause"
+            ],
+            "description": "PHP implementation of sysexits.h",
+            "homepage": "https://github.com/assimtech/sysexits",
+            "time": "2016-01-12 03:49:24"
+        },
         {
             "name": "symfony/console",
             "version": "v3.0.6",

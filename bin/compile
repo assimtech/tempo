@@ -9,3 +9,5 @@ $phar = new Phar($pharFile);
 $local = new Assimtech\Tempo\Node\Local();
 $compiler = new Assimtech\Tempo\Phar\Compiler($phar, $local);
 $compiler->compile();
+
+exit(Assimtech\Sysexits::EX_OK);
