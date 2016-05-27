@@ -62,10 +62,11 @@ final class Compiler
             ->notName('Compiler.php')
             ->exclude('Test')
             ->in('vendor/composer')
+            ->in('vendor/assimtech/sysexits')
             ->in('vendor/symfony/console')
+            ->in('vendor/symfony/polyfill-mbstring')
             ->in('vendor/symfony/process')
             ->in('vendor/symfony/yaml')
-            ->in('vendor/symfony/polyfill-mbstring')
             ->in('src')
         ;
         foreach ($finder as $file) {
