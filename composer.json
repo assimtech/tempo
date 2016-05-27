@@ -21,7 +21,7 @@
         "squizlabs/php_codesniffer": "^2.3",
         "phpmd/phpmd": "^2.2",
         "phpspec/phpspec": "^2.2",
-        "henrikbjorn/phpspec-code-coverage": "^2.0"
+        "henrikbjorn/phpspec-code-coverage": "^1.0"
     },
     "bin": [ "bin/tempo" ]
 }
