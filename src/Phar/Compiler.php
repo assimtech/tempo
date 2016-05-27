@@ -65,6 +65,7 @@ final class Compiler
             ->in('vendor/symfony/console')
             ->in('vendor/symfony/process')
             ->in('vendor/symfony/yaml')
+            ->in('vendor/symfony/polyfill-mbstring')
             ->in('src')
         ;
         foreach ($finder as $file) {
