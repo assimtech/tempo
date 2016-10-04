@@ -1,6 +1,7 @@
-/coverage/
-/vendor/
-/tempo/
-/tempo.php
-/tempo.phar
 /cache.properties
+/composer.lock
+/tempo.phar
+/tempo.php
+/coverage/
+/tempo/
+/vendor/
