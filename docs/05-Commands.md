@@ -21,6 +21,7 @@ live, we remove the current symlink and create a new one pointing at our new rel
 ```php
 <?php
 
+use Assimtech\Sysexits;
 use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,6 +55,8 @@ class Deploy extends AbstractCommand
             escapeshellarg($releasePath)
         ));
         $output->writeln(sprintf('We are live on %s', $remote));
+
+        return Sysexits::EX_OK;
     }
 }
 ```
@@ -74,7 +77,7 @@ try {
     // copy to new release directory
 } catch (Exception $e) {
     // Just delete the new release directory, no harm done.
-    // Abort
+    throw $e;
 }
 
 // Move the current live symlink to the new release directory
@@ -88,6 +91,7 @@ Suppose we want to make the above `Deploy` example more robust.
 ```php
 <?php
 
+use Assimtech\Sysexits;
 use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -135,6 +139,8 @@ class Deploy extends AbstractCommand
             escapeshellarg('releases/'.$releaseDir)
         ));
         $output->writeln(sprintf('We are live on %s', $remote));
+
+        return Sysexits::EX_OK;
     }
 }
 ```

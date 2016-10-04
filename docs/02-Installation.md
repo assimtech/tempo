@@ -1,13 +1,5 @@
 # Installation
 
-## As a PHP Archive (PHAR) - This is the simplest way to use tempo
-
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.3.0/tempo.phar) and place where you want.
-If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects. Don't
-forget to restart your terminal if you just created `~/bin`.
-
-You could also add it to a systemwide `bin` directory such as `/usr/local/bin/tempo`.
-
 
 ## With composer
 
@@ -20,7 +12,16 @@ composer require assimtech/tempo
 This will make tempo share your autoloader so you can reference any namespaces available within your project.
 
 
-### As part of your existing Symfony 2 console application
+## As a PHP Archive (PHAR) - This is the simplest way to use tempo
+
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.3.0/tempo.phar) and place where you want.
+If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects. Don't
+forget to restart your terminal if you just created `~/bin`.
+
+You could also add it to a systemwide `bin` directory such as `/usr/local/bin/tempo`.
+
+
+### As part of your existing Symfony 2/3 console application
 
 Since tempo exposes commands compatible with a `Symfony\Component\Console\Application`, it is possible to add your tempo
 commands to your exiting Symfony Console application.  This would allow you to run tempo from your normal application's
@@ -30,7 +31,9 @@ To achieve this, the best place to start is to have a read of `bin/tempo`.  You 
 to your symfony application:
 
 ```php
-/** @var Assimtech\Tempo\Definition $definition */
+/**
+ * @var Assimtech\Tempo\Definition $definition (See references to `tempo.php` throughout this documentation)
+ */
 $application->addCommands($definition->getCommands());
 ```
 
@@ -42,6 +45,7 @@ This is how you will want to use tempo if you are contributing to it or want to 
 ```shell
 git clone git@github.com:assimtech/tempo.git
 cd tempo
+# Optionally checkout a specific version
 composer install
 ```
 

@@ -1,7 +1,7 @@
 {
     "name": "assimtech/tempo",
     "type": "library",
-    "description": "A scripting tool for running commands on local or remote nodes",
+    "description": "A deployment tool for php projects",
     "homepage": "https://github.com/assimtech/tempo",
     "license": "MIT",
     "autoload": {
@@ -10,12 +10,12 @@
         }
     },
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.3.3",
 
         "assimtech/sysexits": "^1.0",
-        "symfony/console": "^3.0",
-        "symfony/process": "^3.0",
-        "symfony/yaml": "^3.0"
+        "symfony/console": "^2.3|^3.0",
+        "symfony/process": "^2.3|^3.0",
+        "symfony/yaml": "^2.3|^3.0"
     },
     "require-dev": {
         "sebastian/phpcpd": "^2.0",
@@ -24,5 +24,7 @@
         "phpspec/phpspec": "^2.2",
         "henrikbjorn/phpspec-code-coverage": "^1.0"
     },
-    "bin": [ "bin/tempo" ]
+    "bin": [
+        "bin/tempo"
+    ]
 }

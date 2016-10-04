@@ -13,8 +13,11 @@ class Local extends ArrayObject implements NodeInterface
     public function run($command)
     {
         $process = new Process($command);
-        $process->setTimeout(null);
-        $process->mustRun();
+
+        $process
+            ->setTimeout(null)
+            ->mustRun()
+        ;
 
         return $process->getOutput();
     }
