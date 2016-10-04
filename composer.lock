@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "32064951c38f8dd38e17efcd1a84d4bd",
-    "content-hash": "9db7987ae91ebd254b10ada40aaa9654",
+    "hash": "bb8b765bc83a4afd13ee6c8e3f75cf43",
+    "content-hash": "571261ca9959b76d76601a9f3caa3ae6",
     "packages": [
         {
             "name": "assimtech/sysexits",
@@ -1982,7 +1982,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5.9"
+        "php": ">=5.3.3"
     },
     "platform-dev": []
 }
