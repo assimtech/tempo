@@ -5,16 +5,12 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/assimtech/tempo/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/assimtech/tempo/?branch=master)
 
 
-Tempo is a scripting tool for running commands on local or remote nodes. It was originally developed to script complex
-`php` project deployments however can be used for all kinds of tasks (e.g. unix user management, package updates etc).
+A deployment tool for `php` projects. Execute commands on local and remote nodes using `php`.
 
 
 ## Quick start
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.3.0/tempo.phar).
-If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects.
-
-Alternatively, install tempo into your project with composer:
+Install tempo into your project with composer:
 
 ```shell
 composer require assimtech/tempo
@@ -24,11 +20,6 @@ Create a `tempo.php` file in the root of your project containing the following:
 
 ```php
 <?php
-
-// If you have installed tempo with composer into your project, omit the autoloader
-require_once __DIR__ . '/vendor/autoload.php';
-// If you aren't using composer you are responsible for loading MyProject\Tempo\Command\* etc
-// This can be done with require's or your own autoloader
 
 use Assimtech\Tempo;
 use MyProject\Tempo\Command;
@@ -56,7 +47,7 @@ nodes:
 environments:
     -
         name: test
-        nodes: [ server1, server2 ]
+        nodes: [ server1 ]
 ```
 
 Change "server1.example.com" to a server you have ssh access to.
@@ -69,6 +60,7 @@ Then create a `MyProject\Tempo\Command\WhereAmI` class containing the following:
 
 namespace MyProject\Tempo\Command;
 
+use Assimtech\Sysexits;
 use Assimtech\Tempo\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -85,7 +77,8 @@ class WhereAmI extends AbstractCommand
             $uname = $node->run('uname -a');
             $output->writeln("<info>$uname</info>");
         }
-        return 0;
+
+        return Sysexits::EX_OK;
     }
 }
 ```
@@ -97,6 +90,32 @@ tempo test:whereami
 ```
 
 Try adding more environments / servers / commands etc
+
+
+## Known issues
+
+### Running tempo from a docker container may cause connection problems
+
+Due to an issue with the latest ssh version not playing nicely with overlayfs you may experience a connection sharing
+issue like: `Control socket connect(...): Connection refused`
+
+[https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1262287](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1262287)
+
+If you have this issue, you could specify your control master path as a standard filesystem location in your `infrastructure.yml`:
+
+```yaml
+nodes:
+    server1:
+        ssh:
+            host: server1.example.com
+            control:
+                ControlPath: /tmp/%r@%h:%p
+
+environments:
+    -
+        name: test
+        nodes: [ server1 ]
+```
 
 
 ## Documentation

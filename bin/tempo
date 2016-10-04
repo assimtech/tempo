@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use Assimtech\Sysexits;
+
 foreach (array(
         __DIR__ . '/../../../autoload.php',
         __DIR__ . '/../vendor/autoload.php',
@@ -15,7 +17,7 @@ foreach (array(
 if (isset($file)) {
     fwrite(STDERR, 'Unable to locate autoload.php, ensure you have installed dependencies (composer install).'.PHP_EOL);
     fwrite(STDERR, 'For more information see http://getcomposer.org/'.PHP_EOL);
-    exit(Assimtech\Sysexits::EX_UNAVAILABLE);
+    exit(Sysexits::EX_UNAVAILABLE);
 }
 
 $definitionPath = 'tempo.php';
@@ -24,11 +26,11 @@ try {
     $definition = $definitionLoader->load($definitionPath);
 } catch (Exception $e) {
     fwrite(STDERR, $e->getMessage() . PHP_EOL);
-    exit(Assimtech\Sysexits::EX_NOINPUT);
+    exit(Sysexits::EX_NOINPUT);
 }
 
 $application = new Symfony\Component\Console\Application('tempo', '0.3.0');
 $application->addCommands($definition->getCommands());
 $application->run();
 
-exit(Assimtech\Sysexits::EX_OK);
+exit(Sysexits::EX_OK);

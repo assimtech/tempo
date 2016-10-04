@@ -1,13 +1,16 @@
 #!/usr/bin/env php
 <?php
 
+use Assimtech\Tempo;
+use Assimtech\Sysexits;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $pharFile = 'tempo.phar';
 
 $phar = new Phar($pharFile);
-$local = new Assimtech\Tempo\Node\Local();
-$compiler = new Assimtech\Tempo\Phar\Compiler($phar, $local);
+$local = new Tempo\Node\Local();
+$compiler = new Tempo\Phar\Compiler($phar, $local);
 $compiler->compile();
 
-exit(Assimtech\Sysexits::EX_OK);
+exit(Sysexits::EX_OK);

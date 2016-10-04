@@ -43,7 +43,7 @@ class RemoteSpec extends ObjectBehavior
                     'RequestTTY' => 'no',
                 ),
                 'control' => array(
-                    'ControlPath' => '~/.ssh/tempo_test-host',
+                    'ControlPath' => '~/.ssh/tempo_ctl_%r@%h:%p',
                     'ControlPersist' => '5m',
                     'closeOnDestruct' => false,
                     'useControlMaster' => true,
@@ -98,7 +98,7 @@ class RemoteSpec extends ObjectBehavior
             '-O',
             'check',
             'test-host',
-        ))->shouldBeCalled();
+        ))->willReturn($processBuilder);
         $processBuilder->getProcess()->willReturn($process);
         $process->disableOutput()->willReturn($process);
         $process->run()->shouldBeCalled();
@@ -109,7 +109,7 @@ class RemoteSpec extends ObjectBehavior
             '-O',
             'exit',
             'test-host',
-        ))->shouldBeCalled();
+        ))->willReturn($processBuilder);
         $processBuilder->getProcess()->willReturn($process);
         $process->disableOutput()->willReturn($process);
         $process->mustRun()->shouldBeCalled();
@@ -145,7 +145,7 @@ class RemoteSpec extends ObjectBehavior
             '-O',
             'check',
             'test-host',
-        ))->shouldBeCalled();
+        ))->willReturn($processBuilder);
         $processBuilder->getProcess()->willReturn($process);
         $process->disableOutput()->willReturn($process);
         $process->run()->shouldBeCalled();
@@ -171,7 +171,7 @@ class RemoteSpec extends ObjectBehavior
             'Port=2222',
 
             'test-host',
-        ))->shouldBeCalled();
+        ))->willReturn($processBuilder);
         $processBuilder->getProcess()->willReturn($process);
         $process->disableOutput()->willReturn($process);
         $process->mustRun()->shouldBeCalled();
@@ -188,8 +188,8 @@ class RemoteSpec extends ObjectBehavior
             'Port=2222',
 
             'test-host',
-        ))->shouldBeCalled();
-        $processBuilder->setInput($command)->shouldBeCalled();
+        ))->willReturn($processBuilder);
+        $processBuilder->setInput($command)->willReturn($processBuilder);
         $processBuilder->getProcess()->willReturn($process);
         $process->setTimeout(null)->shouldBeCalled();
         $process->mustRun()->shouldBeCalled();

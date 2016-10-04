@@ -57,26 +57,24 @@ class Remote extends ValidatableArrayObject implements NodeInterface
         }
 
         // Defaults
-        if (is_array($input)) {
-            $input = array_replace_recursive(array(
-                'ssh' => array(
-                    'host' => null,
-                    'options' => array(
-                        'RequestTTY' => 'no', // Disable pseudo-tty allocation
-                    ),
-                    'control' => array(
-                        'useControlMaster' => true,
-                    ),
+        $input = array_replace_recursive(array(
+            'ssh' => array(
+                'host' => null,
+                'options' => array(
+                    'RequestTTY' => 'no', // Disable pseudo-tty allocation
                 ),
-            ), $input);
+                'control' => array(
+                    'useControlMaster' => true,
+                ),
+            ),
+        ), $input);
 
-            if ($input['ssh']['control']['useControlMaster']) {
-                $input['ssh']['control'] = array_merge(array(
-                    'ControlPath' => '~/.ssh/tempo_' . $input['ssh']['host'],
-                    'ControlPersist' => '5m',
-                    'closeOnDestruct' => false,
-                ), $input['ssh']['control']);
-            }
+        if ($input['ssh']['control']['useControlMaster']) {
+            $input['ssh']['control'] = array_merge(array(
+                'ControlPath' => '~/.ssh/tempo_ctl_%r@%h:%p',
+                'ControlPersist' => '5m',
+                'closeOnDestruct' => false,
+            ), $input['ssh']['control']);
         }
 
         parent::__construct($input, $flags, $iteratorClass);
@@ -141,13 +139,14 @@ class Remote extends ValidatableArrayObject implements NodeInterface
             && $this['ssh']['control']['closeOnDestruct']
             && $this->isControlMasterEstablished()
         ) {
-            $processBuilder = $this->getProcessBuilder();
-            $processBuilder->setArguments(array(
-                '-O', // Control an active connection multiplexing master process
-                'exit',
-                (string)$this
-            ));
-            $process = $processBuilder->getProcess();
+            $process = $this->getProcessBuilder()
+                ->setArguments(array(
+                    '-O', // Control an active connection multiplexing master process
+                    'exit',
+                    (string)$this
+                ))
+                ->getProcess()
+            ;
 
             $process
                 ->disableOutput()
@@ -208,13 +207,14 @@ class Remote extends ValidatableArrayObject implements NodeInterface
 
     protected function isControlMasterEstablished()
     {
-        $processBuilder = $this->getProcessBuilder();
-        $processBuilder->setArguments(array(
-            '-O', // Control an active connection multiplexing master process
-            'check',
-            (string)$this
-        ));
-        $process = $processBuilder->getProcess();
+        $process = $this->getProcessBuilder()
+            ->setArguments(array(
+                '-O', // Control an active connection multiplexing master process
+                'check',
+                (string)$this
+            ))
+            ->getProcess()
+        ;
 
         $process
             ->disableOutput()
@@ -231,7 +231,6 @@ class Remote extends ValidatableArrayObject implements NodeInterface
      */
     protected function establishControlMaster()
     {
-        $processBuilder = $this->getProcessBuilder();
         $args = array_merge(array(
             '-n', // Redirects stdin from /dev/null (actually, prevents reading from stdin)
 
@@ -242,8 +241,11 @@ class Remote extends ValidatableArrayObject implements NodeInterface
             'ControlPersist='.$this['ssh']['control']['ControlPersist'],
         ), $this->getSshOptionArgs());
         $args[] = (string)$this;
-        $processBuilder->setArguments($args);
-        $process = $processBuilder->getProcess();
+
+        $process = $this->getProcessBuilder()
+            ->setArguments($args)
+            ->getProcess()
+        ;
 
         $process
             ->disableOutput()
@@ -260,16 +262,17 @@ class Remote extends ValidatableArrayObject implements NodeInterface
             $this->establishControlMaster();
         }
 
-        $processBuilder = $this->getProcessBuilder();
         $args = $this->getSshOptionArgs();
         $args[] = (string)$this;
-        $processBuilder->setArguments($args);
-        $processBuilder
+
+        $process = $this->getProcessBuilder()
+            ->setArguments($args)
             ->setInput($command)
+            ->getProcess()
         ;
-        $process = $processBuilder->getProcess();
 
         $process->setTimeout(null);
+
         try {
             $process->mustRun();
         } catch (ProcessFailedException $e) {

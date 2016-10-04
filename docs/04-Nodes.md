@@ -158,7 +158,7 @@ Turns connection sharing via ssh's ControlMaster on or off.
 
 ##### ssh control ControlPath
 
-Optional - `string` (Defaults to `~/.ssh/tempo_<node name>`)
+Optional - `string` (Defaults to `~/.ssh/tempo_ctl_%r@%h:%p`)
 
 The path to the socket file of the ControlMaster connection
 See "ControlPath" in [ssh_config(5)](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/ssh_config.5)
