@@ -29,7 +29,7 @@ try {
     exit(Sysexits::EX_NOINPUT);
 }
 
-$application = new Symfony\Component\Console\Application('tempo', '0.3.1');
+$application = new Symfony\Component\Console\Application('tempo', 'dev-master');
 $application->addCommands($definition->getCommands());
 $application->run();
 
