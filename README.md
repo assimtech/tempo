@@ -99,12 +99,13 @@ Try adding more environments / servers / commands etc
 Due to an issue with the latest ssh version not playing nicely with overlayfs you may experience a connection sharing
 issue like: `Control socket connect(...): Connection refused`
 
-You may also notice this issue if script you are running seems to be authenticating again for each remote command or if
-you see the MOTD coming back in the response for each command.
+If the script you are running seems to be authenticating again for each remote command or if you see the MOTD coming
+back in the response for each command this may also be the cause.
 
 [https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1262287](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1262287)
 
-If you have this issue, you could specify your control master path as a standard filesystem location in your `infrastructure.yml`:
+If you have this issue, you could specify your control master path as a standard filesystem location in your
+`infrastructure.yml` (anywhere in your container outside of a host directory volume):
 
 ```yaml
 nodes:
