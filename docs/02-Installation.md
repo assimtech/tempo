@@ -14,7 +14,7 @@ This will make tempo share your autoloader so you can reference any namespaces a
 
 ## As a PHP Archive (PHAR) - This is the simplest way to use tempo
 
-Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.3.0/tempo.phar) and place where you want.
+Download [tempo.phar](https://github.com/assimtech/tempo/releases/download/0.3.1/tempo.phar) and place where you want.
 If you place it in `~/bin/tempo` and make it executable you will be able to run `tempo` from any of your projects. Don't
 forget to restart your terminal if you just created `~/bin`.
 
